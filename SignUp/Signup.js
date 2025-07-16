@@ -4,34 +4,29 @@ import { StatusBar } from 'expo-status-bar';
 import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 
-export default function App() {
+export default function Signup() {
   return (
     <View style={styles.container}>
-      <Image source={require('../assets/image 22.png')} style={styles.logo} />
-
+      <Image source={require('../assets/image22.png')} style={styles.logo} />
       <Text style={styles.title}>Daftar Sekarang!</Text>
       <Text style={styles.subtitle}>Biar kamu selalu update kabar Tulungagung.</Text>
 
-      {/* Tombol Daftar dengan Email */}
       <TouchableOpacity style={styles.emailButton}>
         <AntDesign name="mail" size={24} color="#fff" style={{ marginRight: 10 }} />
         <Text style={styles.emailButtonText}>Daftar dengan Email</Text>
       </TouchableOpacity>
 
-      {/* Garis dan teks "atau" */}
       <View style={styles.dividerContainer}>
         <View style={styles.dividerLine} />
         <Text style={styles.orText}>atau</Text>
         <View style={styles.dividerLine} />
       </View>
 
-      {/* Tombol Daftar dengan Google */}
       <TouchableOpacity style={styles.googleButton}>
         <FontAwesome name="google" size={20} color="#000" style={{ marginRight: 10 }} />
         <Text style={styles.googleButtonText}>Daftar dengan Google</Text>
       </TouchableOpacity>
 
-      {/* Teks login */}
       <Text style={styles.loginText}>
         Sudah punya akun? <Text style={styles.loginLink}>Masuk</Text>
       </Text>
@@ -40,6 +35,7 @@ export default function App() {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
