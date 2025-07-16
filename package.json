@@ -11,16 +11,18 @@
   },
   "dependencies": {
     "@expo-google-fonts/poppins": "^0.4.0",
+    "@expo/vector-icons": "^14.1.0",
     "expo": "~53.0.17",
     "expo-font": "~13.3.2",
     "expo-status-bar": "~2.2.3",
     "react": "19.0.0",
     "react-native": "0.79.5",
-    "react-native-vector-icons": "^10.2.0",
-    "@expo/vector-icons": "^14.1.0"
+    "react-native-vector-icons": "^10.2.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6"
   },
   "private": true
 }

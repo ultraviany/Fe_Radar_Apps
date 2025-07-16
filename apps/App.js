@@ -7,7 +7,7 @@ import { FontAwesome } from '@expo/vector-icons';
 export default function App() {
   return (
     <View style={styles.container}>
-      <Image source={require('./assets/image 22.png')} style={styles.logo} />
+      <Image source={require('../assets/image 22.png')} style={styles.logo} />
 
       <Text style={styles.title}>Daftar Sekarang!</Text>
       <Text style={styles.subtitle}>Biar kamu selalu update kabar Tulungagung.</Text>
