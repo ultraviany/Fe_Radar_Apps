@@ -1,6 +1,14 @@
 import React from 'react';
-import Signup from './SignUp/Signup';
+import { NavigationContainer } from '@react-navigation/native';
+import { SaveProvider } from './Context/SaveContext';
+import MainNavigator from './BottomNavigation';
 
 export default function App() {
-  return <Signup />;
+  return (
+    <SaveProvider>
+      <NavigationContainer>
+        <MainNavigator />
+      </NavigationContainer>
+    </SaveProvider>
+  );
 }
