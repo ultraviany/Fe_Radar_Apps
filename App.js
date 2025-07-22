@@ -1,6 +1,7 @@
+// App.js
 import React from 'react';
-import Signup from './SignUp/Signup';
+import RootNavigation from './Navigation/RootNavigation';
 
 export default function App() {
-  return <Signup />;
+  return <RootNavigation />;
 }
