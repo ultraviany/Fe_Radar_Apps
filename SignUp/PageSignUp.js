@@ -1,10 +1,10 @@
+// SignUp/PageSignUp.js
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { AntDesign } from '@expo/vector-icons';
-import { FontAwesome } from '@expo/vector-icons';
+import { AntDesign, FontAwesome } from '@expo/vector-icons';
 
-export default function Signup() {
+export default function PageSignUp({ navigation }) {
   return (
     <View style={styles.container}>
       <Image source={require('../assets/image22.png')} style={styles.logo} />
@@ -28,14 +28,16 @@ export default function Signup() {
       </TouchableOpacity>
 
       <Text style={styles.loginText}>
-        Sudah punya akun? <Text style={styles.loginLink}>Masuk</Text>
+        Sudah punya akun?{' '}
+        <Text style={styles.loginLink} onPress={() => navigation.navigate('Login')}>
+          Masuk
+        </Text>
       </Text>
 
       <StatusBar style="auto" />
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -71,7 +73,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: '100%',
     justifyContent: 'center',
-    marginBottom: 8, // jarak ke "atau"
+    marginBottom: 8,
     elevation: 2,
   },
   emailButtonText: {
@@ -81,8 +83,8 @@ const styles = StyleSheet.create({
   dividerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4,       // agar tidak terlalu jauh ke bawah
-    marginBottom: 15,   // jarak ke tombol Google
+    marginTop: 4,
+    marginBottom: 15,
     width: '100%',
   },
   dividerLine: {
