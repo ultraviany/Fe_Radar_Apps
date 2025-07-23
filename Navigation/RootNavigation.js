@@ -14,6 +14,7 @@ import PageCreate from '../CRUD/Create/PageCreate';
 import PageRead from '../CRUD/Read/PageRead';
 import PageUpdate from '../CRUD/Update/PageUpdate';
 import PageDelete from '../CRUD/Delete/PageDelete';
+import HomeUpdate from '../CRUD/Update/HomeUpdate';
 
 
 const Stack = createNativeStackNavigator();
@@ -28,11 +29,12 @@ export default function RootNavigation() {
                 <Stack.Screen name="PagePw-OTP" component={PagePwOTP} options={{ headerShown: false }} />
                 <Stack.Screen name="PageEpaper" component={PageEpaper} />
                 <Stack.Screen name="PageComment" component={PageComment} />
-                <Stack.Screen name="PageCRUD" component={PageCRUD}/>
-                <Stack.Screen name="PageCreate" component={PageCreate}/>
-                <Stack.Screen name="PageRead" component={PageRead}/>
-                <Stack.Screen name="PageUpdate" component={PageUpdate}/>
-                <Stack.Screen name="PageDelate" component={PageDelete}/>
+                <Stack.Screen name="PageCRUD" component={PageCRUD} />
+                <Stack.Screen name="PageCreate" component={PageCreate} />
+                <Stack.Screen name="PageRead" component={PageRead} />
+                <Stack.Screen name="PageDelete" component={PageDelete} />
+                <Stack.Screen name="HomeUpdate" component={HomeUpdate} options={{ headerShown: false }} />
+                <Stack.Screen name="PageUpdate" component={PageUpdate} options={{ headerShown: false }} />
             </Stack.Navigator>
         </NavigationContainer>
     );

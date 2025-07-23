@@ -6,7 +6,6 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
-  Alert,
   Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -20,7 +19,7 @@ const allData = [
     id: '1',
     image: cover1,
     date: '10 Juli 2025',
-    rawDate: new Date(2025, 6, 10), // bulan 6 = Juli (0-indexed)
+    rawDate: new Date(2025, 6, 10), // bulan 6 = Juli
   },
   {
     id: '2',
@@ -30,25 +29,18 @@ const allData = [
   },
 ];
 
-export default function PageDelete({ navigation }) {
+export default function HomeUpdate({ navigation }) {
   const [selectedDate, setSelectedDate] = useState(null);
   const [showPicker, setShowPicker] = useState(false);
 
-  const handleDelete = (item) => {
-    Alert.alert('Berhasil', `Epaper tanggal ${item.date} berhasil dihapus`);
-  };
-
   const handleDateChange = (event, date) => {
     setShowPicker(false);
-    if (date) {
-      setSelectedDate(date);
-    }
+    if (date) setSelectedDate(date);
   };
 
   const filteredData = selectedDate
     ? allData.filter(
-        (item) =>
-          item.rawDate.toDateString() === selectedDate.toDateString()
+        (item) => item.rawDate.toDateString() === selectedDate.toDateString()
       )
     : allData;
 
@@ -61,10 +53,10 @@ export default function PageDelete({ navigation }) {
         </View>
         <Text style={styles.dateText}>{item.date}</Text>
         <TouchableOpacity
-          style={styles.deleteButton}
-          onPress={() => handleDelete(item)}
+          style={styles.editButton}
+          onPress={() => navigation.navigate('PageUpdate', { item })}
         >
-          <Ionicons name="trash-outline" size={16} color="#B91C1C" />
+          <Ionicons name="create-outline" size={16} color="#1D4ED8" />
         </TouchableOpacity>
       </View>
     </View>
@@ -152,17 +144,13 @@ const styles = StyleSheet.create({
   },
   yellowText: { color: '#efbe1eff', fontWeight: 'bold' },
   whiteText: { color: '#fff', fontWeight: 'bold' },
-  list: {
-    paddingHorizontal: 16,
-    paddingTop: 20,
-  },
   filterButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
     marginHorizontal: 16,
     marginTop: 16,
-    paddingVertical: 14, // diperbesar
+    paddingVertical: 14,
     paddingHorizontal: 16,
     borderRadius: 12,
     shadowColor: '#000',
@@ -174,7 +162,11 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     color: '#1E293B',
     fontWeight: '500',
-    fontSize: 15, // diperbesar
+    fontSize: 15,
+  },
+  list: {
+    paddingHorizontal: 16,
+    paddingTop: 20,
   },
   card: {
     backgroundColor: '#fff',
@@ -219,7 +211,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 6,
   },
-  deleteButton: {
+  editButton: {
     backgroundColor: '#fff',
     padding: 6,
     borderRadius: 50,

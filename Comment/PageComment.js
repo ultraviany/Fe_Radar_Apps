@@ -108,12 +108,12 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   headerTitle: {
-    fontSize: 40,
+    fontSize: 35,
     fontWeight: 'bold',
     color: '#fff',
   },
   headerSubtitle: {
-    fontSize: 20,
+    fontSize: 25,
     marginTop: 8,
   },
   yellowText: {

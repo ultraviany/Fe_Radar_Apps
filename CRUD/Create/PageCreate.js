@@ -1,4 +1,3 @@
-// CRUD/Create/PageCreate.js
 import React, { useState } from 'react';
 import {
   View,
@@ -7,51 +6,70 @@ import {
   StyleSheet,
   Image,
   Platform,
-  TextInput,
+  Alert,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function PageCreate({ navigation }) {
   const [coverUri, setCoverUri] = useState(null);
-  const [pdfName, setPdfName] = useState(null);
-  const [tanggalTerbit, setTanggalTerbit] = useState('');
+  const [pdfFile, setPdfFile] = useState(null);
+  const [date, setDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
-  // Fungsi pilih gambar dari galeri
   const pickCoverImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       quality: 1,
     });
-
-    if (!result.canceled) {
-      setCoverUri(result.assets[0].uri);
-    }
+    if (!result.canceled) setCoverUri(result.assets[0].uri);
   };
 
-  // Fungsi pilih PDF
   const pickPdf = async () => {
     const result = await DocumentPicker.getDocumentAsync({
       type: 'application/pdf',
     });
+    if (result.type === 'success') setPdfFile(result);
+  };
 
-    if (result.type === 'success') {
-      setPdfName(result.name);
+  const handleDateChange = (event, selectedDate) => {
+    setShowDatePicker(false);
+    if (selectedDate) setDate(selectedDate);
+  };
+
+  const formatDate = (date) => {
+    return date.toLocaleDateString('id-ID', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    });
+  };
+
+  const handleSave = () => {
+    if (!coverUri || !pdfFile) {
+      Alert.alert('Lengkapi Data', 'Silakan unggah cover dan file PDF terlebih dahulu.');
+      return;
     }
+
+    Alert.alert('Berhasil', 'Data berhasil disimpan!');
+    console.log('Cover URI:', coverUri);
+    console.log('PDF File:', pdfFile);
+    console.log('Tanggal:', formatDate(date));
   };
 
   return (
     <View style={styles.container}>
       {/* HEADER */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={28} color="#fff" />
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>
-          <Text style={styles.whiteText}>EPAPER{'\n'}</Text>
-          <Text style={styles.yellowText}>RADAR</Text>
+        <Text style={styles.headerTitle}>EPAPER</Text>
+        <Text style={styles.headerSubtitle}>
+          <Text style={styles.yellowText}>RADAR </Text>
           <Text style={styles.whiteText}>TULUNGAGUNG</Text>
         </Text>
       </View>
@@ -59,11 +77,8 @@ export default function PageCreate({ navigation }) {
       {/* FORM */}
       <View style={styles.formWrapper}>
         <Text style={styles.formTitle}>Tambahkan Berita Terbaru</Text>
-        <Text style={styles.formDesc}>
-          Pastikan form yang diisi sesuai dengan judul yang tertera.
-        </Text>
+        <Text style={styles.formDesc}>Pastikan form yang diisi sesuai dengan judul yang tertera.</Text>
 
-        {/* UPLOAD COVER */}
         <Text style={styles.label}>Cover E-paper</Text>
         <TouchableOpacity style={styles.uploadBox} onPress={pickCoverImage}>
           {coverUri ? (
@@ -74,23 +89,31 @@ export default function PageCreate({ navigation }) {
         </TouchableOpacity>
         <Text style={styles.note}>*maksimal 100MB</Text>
 
-        {/* UPLOAD PDF */}
-        <Text style={styles.label}>Pdf E-paper</Text>
+        <Text style={styles.label}>PDF E-paper</Text>
         <TouchableOpacity style={styles.uploadBox} onPress={pickPdf}>
-          <Text style={styles.uploadText}>📄 {pdfName || 'Upload pdf e-paper'}</Text>
+          <Text style={styles.uploadText}>
+            📄 {pdfFile ? pdfFile.name : 'Upload PDF e-paper'}
+          </Text>
         </TouchableOpacity>
-        <Text style={styles.note}>*pastikan format file yang anda kirim .pdf</Text>
+        <Text style={styles.note}>*pastikan format file yang Anda kirim .pdf</Text>
 
-        {/* TANGGAL TERBIT */}
-        <Text style={styles.label}>Tanggal terbit E-paper</Text>
-        <TextInput
-          placeholder="Masukkan tanggal terbit epaper"
-          style={styles.input}
-          value={tanggalTerbit}
-          onChangeText={setTanggalTerbit}
-        />
+        <Text style={styles.label}>Tanggal Terbit E-paper</Text>
+        <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.input}>
+          <View style={styles.dateInput}>
+            <Text>{formatDate(date)}</Text>
+            <Ionicons name="calendar" size={20} color="#000" />
+          </View>
+        </TouchableOpacity>
+        {showDatePicker && (
+          <DateTimePicker
+            value={date}
+            mode="date"
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+            onChange={handleDateChange}
+          />
+        )}
 
-        <TouchableOpacity style={styles.saveButton}>
+        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
           <Text style={styles.saveText}>Simpan Berita</Text>
         </TouchableOpacity>
       </View>
@@ -102,41 +125,38 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F9FAFB' },
   header: {
     backgroundColor: '#1E3A8A',
-    paddingTop: 90,
+    paddingTop: Platform.OS === 'ios' ? 90 : 70,
     paddingBottom: 30,
     alignItems: 'center',
     position: 'relative',
   },
   backButton: {
     position: 'absolute',
-    top: 60,
+    top: Platform.OS === 'ios' ? 60 : 40,
     left: 20,
     zIndex: 1,
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 35,
     fontWeight: 'bold',
     color: '#fff',
-    textAlign: 'center',
   },
-  yellowText: { color: '#efbe1eff', fontWeight: 'bold' },
-  whiteText: { color: '#fff', fontWeight: 'bold' },
-
-  formWrapper: { padding: 20 },
-  formTitle: {
-    fontSize: 16,
+  headerSubtitle: {
+    fontSize: 25,
+    marginTop: 8,
+  },
+  yellowText: {
+    color: '#efbe1eff',
     fontWeight: 'bold',
-    marginBottom: 4,
   },
-  formDesc: {
-    color: '#666',
-    marginBottom: 20,
+  whiteText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
-  label: {
-    marginTop: 12,
-    marginBottom: 6,
-    fontWeight: '600',
-  },
+  formWrapper: { padding: 20 },
+  formTitle: { fontSize: 16, fontWeight: 'bold', marginBottom: 4 },
+  formDesc: { color: '#666', marginBottom: 20 },
+  label: { marginTop: 12, marginBottom: 6, fontWeight: '600' },
   uploadBox: {
     backgroundColor: '#fff',
     borderRadius: 10,
@@ -146,22 +166,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 5,
   },
-  uploadText: {
-    color: '#999',
-    fontStyle: 'italic',
-  },
+  uploadText: { color: '#999', fontStyle: 'italic' },
   coverPreview: {
     width: '100%',
     height: 160,
     resizeMode: 'contain',
     borderRadius: 8,
   },
-  note: {
-    color: '#888',
-    fontSize: 12,
-    marginBottom: 12,
-    marginTop: -5,
-  },
+  note: { color: '#888', fontSize: 12, marginBottom: 12, marginTop: -5 },
   input: {
     backgroundColor: '#fff',
     padding: 14,
@@ -170,6 +182,11 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     marginBottom: 20,
   },
+  dateInput: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   saveButton: {
     backgroundColor: '#1E3A8A',
     paddingVertical: 14,
@@ -177,8 +194,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
   },
-  saveText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
+  saveText: { color: '#fff', fontWeight: 'bold' },
 });
