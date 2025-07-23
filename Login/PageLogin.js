@@ -51,7 +51,6 @@ export default function PageLogin({ navigation }) {
 
             Alert.alert("Login Berhasil");
 
-            // ✅ Arahkan ke halaman sesuai role
             if (role === "ADMIN") {
                 navigation.navigate("PageCRUD");
             } else {
