@@ -7,6 +7,9 @@ import {
     TouchableOpacity,
     Image,
     Alert,
+    ScrollView,
+    KeyboardAvoidingView,
+    Platform,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -24,7 +27,7 @@ export default function PageLogin({ navigation }) {
         }
 
         try {
-            const response = await fetch("http://10.132.31.112:3000/RadarApps/api/v1/login", {
+            const response = await fetch("http://192.168.100.7:3000/RadarApps/api/v1/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, email, password }),
@@ -46,7 +49,6 @@ export default function PageLogin({ navigation }) {
                 return;
             }
 
-            // Simpan token ke local
             await AsyncStorage.setItem("token", token);
 
             Alert.alert("Login Berhasil");
@@ -54,7 +56,6 @@ export default function PageLogin({ navigation }) {
             if (role === "ADMIN") {
                 navigation.navigate("PageCRUD");
             } else {
-                // Ganti dengan halaman utama user biasa
                 navigation.navigate("PageEpaper");
             }
 
@@ -64,63 +65,69 @@ export default function PageLogin({ navigation }) {
         }
     };
 
-
     return (
-        <View style={styles.container}>
-            <Image source={require('../assets/image22.png')} style={styles.logo} />
-            <Text style={styles.headerText}>Login yuk!</Text>
-            <Text style={styles.subText}>Biar nggak ketinggalan berita Tulungagung.</Text>
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+            <ScrollView
+                contentContainerStyle={styles.container}
+                keyboardShouldPersistTaps="handled"
+            >
+                <Image source={require('../assets/image22.png')} style={styles.logo} />
+                <Text style={styles.headerText}>Login yuk!</Text>
+                <Text style={styles.subText}>Biar nggak ketinggalan berita Tulungagung.</Text>
 
-            <TextInput
-                style={styles.input}
-                placeholder="Masukkan username"
-                value={username}
-                onChangeText={setUsername}
-                keyboardType="email-address"
-                autoCapitalize="none"
-            />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Masukkan username"
+                    value={username}
+                    onChangeText={setUsername}
+                    autoCapitalize="none"
+                />
 
-            <TextInput
-                style={styles.input}
-                placeholder="Masukkan email"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-            />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Masukkan email"
+                    value={email}
+                    onChangeText={setEmail}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                />
 
-            <TextInput
-                style={styles.input}
-                placeholder="Masukkan kata sandi"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-            />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Masukkan kata sandi"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry
+                />
 
-            <TouchableOpacity onPress={() => navigation.navigate('PageKonfrimOTP')}>
-                <Text style={styles.forgotPassword}>Lupa kata sandi?</Text>
-            </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('PageKonfrimOTP')}>
+                    <Text style={styles.forgotPassword}>Lupa kata sandi?</Text>
+                </TouchableOpacity>
 
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-                <Text style={styles.loginButtonText}>Login</Text>
-            </TouchableOpacity>
+                <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+                    <Text style={styles.loginButtonText}>Login</Text>
+                </TouchableOpacity>
 
-            <Text style={styles.signupText}>
-                Belum punya akun?{' '}
-                <Text
-                    style={styles.signupLink}
-                    onPress={() => navigation.navigate('SignUp')}
-                >
-                    Daftar Sekarang
+                <Text style={styles.signupText}>
+                    Belum punya akun?{' '}
+                    <Text
+                        style={styles.signupLink}
+                        onPress={() => navigation.navigate('SignUp')}
+                    >
+                        Daftar Sekarang
+                    </Text>
                 </Text>
-            </Text>
-        </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1,
         backgroundColor: '#fff',
         padding: 24,
         justifyContent: 'center',
