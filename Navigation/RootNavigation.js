@@ -35,7 +35,6 @@ export default function RootNavigation() {
                 <Stack.Screen name="PageDelete" component={PageDelete} />
                 <Stack.Screen name="HomeUpdate" component={HomeUpdate} options={{ headerShown: false }} />
                 <Stack.Screen name="PageUpdate" component={PageUpdate} options={{ headerShown: false }} />
-
             </Stack.Navigator>
         </NavigationContainer>
     );
