@@ -249,8 +249,6 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: "#2F5C9A",
-    // borderBottomLeftRadius: 20,
-    // borderBottomRightRadius: 20,
     padding: 30,
     flexDirection: "row",
     justifyContent: "space-between",

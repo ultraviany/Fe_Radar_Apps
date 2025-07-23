@@ -6,6 +6,7 @@ import HomePage from "./Home/pageHome";
 import SavePage from "./Save/pageSave";
 import AccountPage from "./Account/pageAccount";
 import AboutPage from "./AboutApp/pageAboutApp";
+import ActivityPage from "./Activity/PageActivity";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 const Tab = createBottomTabNavigator();
@@ -44,6 +45,7 @@ export default function MainNavigator() {
         component={TabNavigator}
         options={{ headerShown: false }}
       />
+      {/* Tentang Aplikasi */}
       <Stack.Screen
         name="About"
         component={AboutPage}
@@ -61,7 +63,24 @@ export default function MainNavigator() {
           },
         }}
       />
-      {/* Tambahkan screen lainnya jika perlu */}
+      {/* Halaman Aktivitas */}
+      <Stack.Screen
+        name="Activity"
+        component={ActivityPage}
+        options={{
+          title: "Aktivitas",
+          headerStyle: {
+            backgroundColor: "#2F5C9A",
+             // Warna biru untuk header
+          },
+          headerTintColor: "#fff", // Warna putih untuk teks dan ikon back
+          headerTitleStyle: {
+            marginRight: 12,
+            fontSize: 18,
+            fontWeight: "bold", // (Opsional) Membuat judul tebal
+          },
+        }}
+        />
     </Stack.Navigator>
   );
 }

@@ -53,6 +53,7 @@ const AccountPage = () => {
             icon={<FontAwesome name="history" size={20} color="#fff" />}
             label="Aktivitas"
             sub="Riwayat komentar dan menyukai"
+            onPress={() => navigation.navigate("Activity")}
           />
           <MenuItem
             icon={<Entypo name="info-with-circle" size={20} color="#fff" />}
