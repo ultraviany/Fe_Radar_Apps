@@ -5,6 +5,9 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform ,
+  SafeAreaView ,
   TextInput,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -36,57 +39,74 @@ export default function PageComment({ navigation }) {
     }
   };
 
-  return (
-    <View style={styles.container}>
-      {/* HEADER */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>EPAPER</Text>
-        <Text style={styles.headerSubtitle}>
-          <Text style={styles.yellowText}>RADAR</Text>
-          <Text style={styles.whiteText}> TULUNGAGUNG</Text>
-        </Text>
-      </View>
+return (
+  <SafeAreaView style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 1 : 0} // ganti sesuai notch/toolbar
+    >
+      <View style={styles.container}>
+        {/* HEADER */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+            <Ionicons name="arrow-back" size={24} color="#fff" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>EPAPER</Text>
+          <Text style={styles.headerSubtitle}>
+            <Text style={styles.yellowText}>RADAR</Text>
+            <Text style={styles.whiteText}> TULUNGAGUNG</Text>
+          </Text>
+        </View>
 
-      <Text style={styles.date}>Radar Tulungagung, 14 Juli 2025</Text>
+        <Text style={styles.date}>Radar Tulungagung, 14 Juli 2025</Text>
 
-      <ScrollView style={styles.commentList} showsVerticalScrollIndicator={false}>
-        <Text style={styles.commentLabel}>Komentar</Text>
+        <ScrollView
+          style={styles.commentList}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <Text style={styles.commentLabel}>Komentar</Text>
 
-        {comments.map((item, index) => (
-          <View key={index} style={styles.commentCard}>
-            <View style={styles.commentHeader}>
-              <Ionicons
-                name="person-circle"
-                size={30}
-                color="#3B82F6"
-                style={styles.avatar}
-              />
-              <Text style={styles.commentName}>{item.name}</Text>
+          {comments.map((item, index) => (
+            <View key={index} style={styles.commentCard}>
+              <View style={styles.commentHeader}>
+                <Ionicons
+                  name="person-circle"
+                  size={30}
+                  color="#3B82F6"
+                  style={styles.avatar}
+                />
+                <Text style={styles.commentName}>{item.name}</Text>
+              </View>
+              <Text style={styles.commentText}>{item.comment}</Text>
             </View>
-            <Text style={styles.commentText}>{item.comment}</Text>
-          </View>
-        ))}
-      </ScrollView>
+          ))}
+        </ScrollView>
 
-      {/* INPUT KOMENTAR */}
-      <View style={styles.commentInputArea}>
-        <Ionicons name="person-circle-outline" size={28} color="#6B7280" />
-        <TextInput
-          style={styles.input}
-          placeholder="Tambahkan Komentar"
-          placeholderTextColor="#9CA3AF"
-          value={newComment}
-          onChangeText={setNewComment}
-        />
-        <TouchableOpacity onPress={handleSendComment}>
-          <Ionicons name="send" size={24} color={newComment.trim() ? '#1E3A8A' : '#9CA3AF'} />
-        </TouchableOpacity>
+        {/* INPUT KOMENTAR */}
+        <View style={styles.commentInputArea}>
+          <Ionicons name="person-circle-outline" size={28} color="#6B7280" />
+          <TextInput
+            style={styles.input}
+            placeholder="Tambahkan Komentar"
+            placeholderTextColor="#9CA3AF"
+            value={newComment}
+            onChangeText={setNewComment}
+          />
+          <TouchableOpacity onPress={handleSendComment}>
+            <Ionicons
+              name="send"
+              size={24}
+              color={newComment.trim() ? '#1E3A8A' : '#9CA3AF'}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
-  );
+    </KeyboardAvoidingView>
+  </SafeAreaView>
+);
+
 }
 
 const styles = StyleSheet.create({
@@ -170,17 +190,18 @@ const styles = StyleSheet.create({
     color: '#111827',
   },
   commentInputArea: {
-    position: 'relative',
-    bottom: 0,
-    width: '100%',
-    backgroundColor: '#F3F4F6',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderTopWidth: 1,
-    borderColor: '#E5E7EB',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
+    position: 'absolute',
+  bottom: 0,
+  left: 0,
+  right: 0,
+  backgroundColor: '#F3F4F6',
+  paddingVertical: 10,
+  paddingHorizontal: 20,
+  borderTopWidth: 1,
+  borderColor: '#E5E7EB',
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: 10,
   },
   input: {
     flex: 1,
