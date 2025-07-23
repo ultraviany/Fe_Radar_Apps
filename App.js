@@ -1,6 +1,6 @@
 import React from 'react';
-import Signup from './SignUp/Signup';
+import ResetPassword from './ResetPw/Risetpw';
 
 export default function App() {
-  return <Signup />;
+  return <ResetPassword />;
 }
