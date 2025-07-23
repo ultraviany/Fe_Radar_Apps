@@ -33,11 +33,6 @@ export default function RootNavigation() {
                 <Stack.Screen name="PageRead" component={PageRead}/>
                 <Stack.Screen name="PageUpdate" component={PageUpdate}/>
                 <Stack.Screen name="PageDelate" component={PageDelete}/>
-
-
-                
-
-
             </Stack.Navigator>
         </NavigationContainer>
     );

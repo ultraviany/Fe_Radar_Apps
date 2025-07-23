@@ -5,53 +5,91 @@ import {
     TextInput,
     StyleSheet,
     TouchableOpacity,
-    Image
+    Image,
+    Alert,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function PageLogin({ navigation }) {
-    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [username, setUsername] = useState('');
 
-    // Fungsi untuk menangani login
-    const handleLogin = () => {
-        // Logika autentikasi bisa ditambahkan di sini (misalnya Firebase)
-        console.log('Login pressed', { username, email, password });
+    const handleLogin = async () => {
+        console.log("🚀 Tombol login ditekan");
 
-        // Navigasi ke halaman utama setelah login berhasil
-        navigation.navigate('PageCRUD');
+        if (!username || !email || !password) {
+            Alert.alert("Input tidak lengkap", "Isi semua field terlebih dahulu!");
+            return;
+        }
+
+        try {
+            const response = await fetch("http://10.132.31.112:3000/RadarApps/api/v1/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, email, password }),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                console.error("❌ Server Error:", result);
+                Alert.alert("Login gagal", result.message || "Terjadi kesalahan dari server");
+                return;
+            }
+
+            const token = result?.data?.token;
+            const role = result?.data?.role;
+
+            if (!token) {
+                Alert.alert("Login gagal", "Token tidak ditemukan dalam respons");
+                return;
+            }
+
+            // Simpan token ke local
+            await AsyncStorage.setItem("token", token);
+
+            Alert.alert("Login Berhasil");
+
+            // ✅ Arahkan ke halaman sesuai role
+            if (role === "ADMIN") {
+                navigation.navigate("PageCRUD");
+            } else {
+                // Ganti dengan halaman utama user biasa
+                navigation.navigate("PageEpaper");
+            }
+
+        } catch (error) {
+            console.error("❌ Error saat login:", error.message || error);
+            Alert.alert("Login gagal", "Tidak dapat terhubung ke server");
+        }
     };
+
 
     return (
         <View style={styles.container}>
-            {/* Logo Radar Tulungagung */}
-            <Image
-                source={require('../assets/image22.png')}
-                style={styles.logo}
-            />
-
-            {/* Teks Header */}
+            <Image source={require('../assets/image22.png')} style={styles.logo} />
             <Text style={styles.headerText}>Login yuk!</Text>
             <Text style={styles.subText}>Biar nggak ketinggalan berita Tulungagung.</Text>
 
-            {/* Input Username */}
             <TextInput
                 style={styles.input}
-                placeholder="Masukkan nama pengguna"
+                placeholder="Masukkan username"
                 value={username}
                 onChangeText={setUsername}
+                keyboardType="email-address"
+                autoCapitalize="none"
             />
 
-            {/* Input Email */}
             <TextInput
                 style={styles.input}
                 placeholder="Masukkan email"
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
+                autoCapitalize="none"
             />
 
-            {/* Input Password */}
             <TextInput
                 style={styles.input}
                 placeholder="Masukkan kata sandi"
@@ -60,17 +98,14 @@ export default function PageLogin({ navigation }) {
                 secureTextEntry
             />
 
-            {/* Tombol lupa password */}
             <TouchableOpacity onPress={() => navigation.navigate('PageKonfrimOTP')}>
                 <Text style={styles.forgotPassword}>Lupa kata sandi?</Text>
             </TouchableOpacity>
 
-            {/* Tombol Login */}
             <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
                 <Text style={styles.loginButtonText}>Login</Text>
             </TouchableOpacity>
 
-            {/* Navigasi ke halaman Daftar */}
             <Text style={styles.signupText}>
                 Belum punya akun?{' '}
                 <Text
