@@ -1,5 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Platform,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -8,84 +14,126 @@ export default function PageCRUD() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerTitle}>EPAPER</Text>
-      <Text style={styles.subTitle}>RADAR TULUNGAGUNG</Text>
+      {/* HEADER */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={24} color="#fff" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>EPAPER</Text>
+        <Text style={styles.headerSubtitle}>
+          <Text style={styles.yellowText}>RADAR </Text>
+          <Text style={styles.whiteText}>TULUNGAGUNG</Text>
+        </Text>
+      </View>
 
-      {/* Tombol CRUD */}
+      {/* BUTTONS */}
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.card}
+        <MenuButton
+          icon="add"
+          title="Tambahkan Epaper"
+          subtitle="Upload epaper baru"
           onPress={() => navigation.navigate('PageCreate')}
-        >
-          <Ionicons name="add-circle-outline" size={28} color="#1E3A8A" />
-          <Text style={styles.cardText}>Tambahkan Epaper</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.card}
+        />
+        <MenuButton
+          icon="document-text-outline"
+          title="Lihat Koleksi Epaper"
+          subtitle="Jelajahi epaper"
           onPress={() => navigation.navigate('PageRead')}
-        >
-          <Ionicons name="eye-outline" size={28} color="#1E3A8A" />
-          <Text style={styles.cardText}>Lihat Koleksi Epaper</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => navigation.navigate('PageUpdate')}
-        >
-          <Ionicons name="create-outline" size={28} color="#1E3A8A" />
-          <Text style={styles.cardText}>Update Epaper</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.card}
+        />
+        <MenuButton
+          icon="create-outline"
+          title="Update Epaper"
+          subtitle="Edit epaper yang tersedia"
+          onPress={() => navigation.navigate('HomeUpdate')}
+        />
+        <MenuButton
+          icon="trash-outline"
+          title="Hapus Epaper"
+          subtitle="Hapus epaper"
           onPress={() => navigation.navigate('PageDelete')}
-        >
-          <Ionicons name="trash-outline" size={28} color="#DC2626" />
-          <Text style={styles.cardText}>Hapus Epaper</Text>
-        </TouchableOpacity>
+        />
       </View>
     </View>
+  );
+}
+
+function MenuButton({ icon, title, subtitle, onPress }) {
+  return (
+    <TouchableOpacity style={styles.menuButton} onPress={onPress}>
+      <View style={styles.iconContainer}>
+        <Ionicons name={icon} size={24} color="#1E3A8A" />
+      </View>
+      <View>
+        <Text style={styles.menuTitle}>{title}</Text>
+        <Text style={styles.menuSubtitle}>{subtitle}</Text>
+      </View>
+    </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 24,
     backgroundColor: '#F9FAFB',
+  },
+  header: {
+    backgroundColor: '#1E3A8A',
+    paddingTop: Platform.OS === 'ios' ? 90 : 70,
+    paddingBottom: 30,
     alignItems: 'center',
+    position: 'relative',
+  },
+  backButton: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 60 : 40,
+    left: 20,
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 35,
     fontWeight: 'bold',
-    color: '#1E3A8A',
-    marginTop: 50,
+    color: '#fff',
   },
-  subTitle: {
-    fontSize: 16,
-    color: '#FACC15',
+  headerSubtitle: {
+    fontSize: 25,
+    marginTop: 8,
+  },
+  yellowText: {
+    color: '#efbe1eff',
     fontWeight: 'bold',
-    marginBottom: 30,
+  },
+  whiteText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
   buttonContainer: {
-    width: '100%',
+    padding: 28,
+    gap: 30,
+  },
+  menuButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1E3A8A',
+    paddingVertical: 18,
+    paddingHorizontal: 20,
+    borderRadius: 16,
+    elevation: 3,
     gap: 16,
   },
-  card: {
-    flexDirection: 'row',
+  iconContainer: {
     backgroundColor: '#fff',
-    paddingVertical: 14,
-    paddingHorizontal: 20,
     borderRadius: 12,
+    padding: 10,
+    justifyContent: 'center',
     alignItems: 'center',
-    gap: 12,
-    elevation: 2,
-    shadowColor: '#000',
   },
-  cardText: {
+  menuTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#1E293B',
+    color: '#fff',
+  },
+  menuSubtitle: {
+    fontSize: 13,
+    color: '#E5E7EB',
+    marginTop: 2,
   },
 });
