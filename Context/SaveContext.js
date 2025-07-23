@@ -7,16 +7,16 @@ export const SaveProvider = ({ children }) => {
   const [savedNews, setSavedNews] = useState([]);
 
   const toggleSave = (item) => {
-    const isSaved = savedNews.some(news => news.image === item.image);
+    const isSaved = savedNews.some(news => news.id === item.id);
     if (isSaved) {
-      setSavedNews(savedNews.filter(news => news.image !== item.image));
+      setSavedNews(savedNews.filter(news => news.id !== item.id));
     } else {
       setSavedNews([...savedNews, item]);
     }
   };
 
-  const isNewsSaved = (item) => {
-    return savedNews.some(news => news.image === item.image);
+  const isNewsSaved = (id) => {
+    return savedNews.some(news => news.id === id);
   };
 
   return (
