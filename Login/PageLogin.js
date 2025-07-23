@@ -120,10 +120,10 @@ const styles = StyleSheet.create({
     forgotPassword: {
         alignSelf: 'flex-end',
         marginBottom: 20,
-        color: '#1E40AF',
+        color: '#1E4B8A',
     },
     loginButton: {
-        backgroundColor: '#1E3A8A',
+        backgroundColor: '#1E4B8A',
         paddingVertical: 14,
         paddingHorizontal: 40,
         borderRadius: 12,

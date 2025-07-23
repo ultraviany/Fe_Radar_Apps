@@ -124,7 +124,7 @@ export default function PageCreate({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F9FAFB' },
   header: {
-    backgroundColor: '#1E3A8A',
+    backgroundColor: '#1E4B8A',
     paddingTop: Platform.OS === 'ios' ? 90 : 70,
     paddingBottom: 30,
     alignItems: 'center',
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   saveButton: {
-    backgroundColor: '#1E3A8A',
+    backgroundColor: '#1E4B8A',
     paddingVertical: 14,
     borderRadius: 10,
     alignItems: 'center',

@@ -10,6 +10,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 
 const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 export default function PageEpaper({ navigation }) {
   const [currentPage, setCurrentPage] = useState(2);
@@ -25,17 +26,16 @@ export default function PageEpaper({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* HEADER */}
+      {/* HEADER - Menyerupai PageComment */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>
-          <Text style={styles.headerTitleBold}>EPAPER{"\n"}</Text>
-          <Text style={styles.headerSub}>
-            <Text style={styles.yellowText}>RADAR</Text>
-            <Text style={styles.whiteText}> TULUNGAGUNG</Text>
-          </Text>
+
+        <Text style={styles.headerTitle}>EPAPER</Text>
+        <Text style={styles.headerSubtitle}>
+          <Text style={styles.yellowText}>RADAR</Text>
+          <Text style={styles.whiteText}> TULUNGAGUNG</Text>
         </Text>
       </View>
 
@@ -58,7 +58,7 @@ export default function PageEpaper({ navigation }) {
       {/* PAGINATION */}
       <Text style={styles.pagination}>{currentPage} / {totalPages}</Text>
 
-      {/* KOMENTAR AREA */}
+      {/* KOMENTAR */}
       <TouchableOpacity style={styles.commentArea} onPress={() => navigation.navigate('PageComment')}>
         <Ionicons name="chatbubble-ellipses" size={28} color="#000" style={styles.commentIcon} />
         <View style={styles.commentBox}>
@@ -72,38 +72,34 @@ export default function PageEpaper({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E5E7EB',
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
   },
   header: {
-    backgroundColor: '#1E3A8A',
-    width: '100%',
-    paddingTop: 50,
+    backgroundColor: '#1E4B8A',
+    paddingTop: 90,
     paddingBottom: 30,
-    paddingHorizontal: 20,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    position: 'relative',
+    width: '100%',
   },
   backButton: {
     position: 'absolute',
-    top: 50,
+    top: 60,
     left: 20,
     zIndex: 1,
   },
   headerTitle: {
-    marginTop: 20,
-  },
-  headerTitleBold: {
-    fontSize: 22,
+    fontSize: 35,
     fontWeight: 'bold',
     color: '#fff',
   },
-  headerSub: {
-    fontSize: 16,
+  headerSubtitle: {
+    fontSize: 25,
+    marginTop: 8,
   },
   yellowText: {
-    color: '#FFD700',
+    color: '#efbe1eff',
     fontWeight: 'bold',
   },
   whiteText: {
@@ -112,20 +108,20 @@ const styles = StyleSheet.create({
   },
   date: {
     fontWeight: 'bold',
-    marginTop: 16,
-    fontSize: 14,
+    marginTop: 20,
+    fontSize: 15,
   },
   epaperContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1E3A8A',
+    backgroundColor: '#1E4B8A',
     padding: 10,
     borderRadius: 16,
     marginTop: 16,
   },
   image: {
     width: screenWidth * 0.5,
-    height: screenWidth * 0.7,
+    height: screenHeight * 0.4,
     resizeMode: 'contain',
     marginHorizontal: 10,
   },

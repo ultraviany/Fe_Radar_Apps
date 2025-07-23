@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#F9FAFB',
     },
     header: {
-        backgroundColor: '#1E3A8A',
+        backgroundColor: '#1E4B8A',
         paddingTop: Platform.OS === 'ios' ? 90 : 70,
         paddingBottom: 30,
         alignItems: 'center',
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     button: {
-        backgroundColor: '#1E3A8A',
+        backgroundColor: '#1E4B8A',
         paddingVertical: 15,
         borderRadius: 12,
         alignItems: 'center',
