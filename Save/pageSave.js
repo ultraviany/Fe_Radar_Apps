@@ -1,3 +1,4 @@
+// Save/pageSave.js
 import React, { useContext } from "react";
 import {
   View,
@@ -10,12 +11,11 @@ import {
 import { SaveContext } from "../Context/SaveContext";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function SavePage() {
+export default function SavePage({ navigation }) {
   const { savedNews, toggleSave } = useContext(SaveContext);
 
   const renderItem = ({ item }) => (
     <View style={styles.card}>
-      {/* ICON SAVE */}
       <TouchableOpacity
         style={styles.saveIcon}
         onPress={() => toggleSave(item)}
@@ -23,10 +23,10 @@ export default function SavePage() {
         <Ionicons name="bookmark" size={16} color="#2F5C9A" />
       </TouchableOpacity>
 
-      {/* bagian cover */}
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('PageEpaper', { item })}>
         <Image source={item.image} style={styles.image} />
       </TouchableOpacity>
+
       <View style={styles.infoContainer}>
         <View style={styles.dateRow}>
           <Ionicons name="calendar-outline" size={14} color="#2F5C9A" />
@@ -38,17 +38,13 @@ export default function SavePage() {
 
   return (
     <View style={styles.container}>
-      {/* header */}
       <View style={styles.header}>
         <View style={styles.headerTextContainer}>
           <Text style={styles.title}>Tersimpan</Text>
-          <Text style={styles.subTitle}>
-            {savedNews.length} Epaper Tersimpan
-          </Text>
+          <Text style={styles.subTitle}>{savedNews.length} Epaper Tersimpan</Text>
         </View>
       </View>
 
-      {/* kalo ini tidak ada yang save */}
       <View style={styles.contentContainer}>
         {savedNews.length === 0 ? (
           <Text style={styles.empty}>Belum ada berita disimpan</Text>
@@ -68,24 +64,14 @@ export default function SavePage() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#2F5C9A",
-  },
+  container: { flex: 1, backgroundColor: "#2F5C9A" },
   header: {
     paddingTop: 50,
     paddingBottom: 20,
     paddingHorizontal: 16,
     backgroundColor: "#2F5C9A",
-    flexDirection: "row",
-    alignItems: "center",
   },
-  backButton: {
-    marginRight: 10,
-  },
-  headerTextContainer: {
-    flexDirection: "column",
-  },
+  headerTextContainer: { flexDirection: "column" },
   title: {
     fontSize: 18,
     fontWeight: "bold",
@@ -116,13 +102,8 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "#f4f4f4",
     borderRadius: 12,
-    // elevation: 4,
-    // shadowColor: '#000',
-    // shadowOpacity: 0.1,
-    // shadowRadius: 5,
-    // shadowOffset: { width: 0, height: 2 },
     flex: 0.48,
-    // position: 'relative',
+    overflow: "hidden",
   },
   saveIcon: {
     position: "absolute",
@@ -150,17 +131,11 @@ const styles = StyleSheet.create({
     color: "gray",
     fontWeight: "bold",
   },
-  savedTime: {
-    fontSize: 12,
-    color: "#777",
+  dateRow: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   listContent: {
     paddingBottom: 0,
   },
-  dateRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    // marginBottom: 4,
-  },
-
 });

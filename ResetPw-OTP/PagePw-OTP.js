@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -18,12 +19,28 @@ export default function PagePwOTP({ navigation }) {
   const [secure2, setSecure2] = useState(true);
 
   const handleSubmit = () => {
-    if (password !== confirmPassword) {
-      alert("Kata sandi tidak cocok");
+    if (!password || !confirmPassword) {
+      Alert.alert("Peringatan", "Semua kolom harus diisi!");
       return;
     }
-    alert("Kata sandi berhasil diperbarui");
-    navigation.navigate("PageEpaper");
+
+    if (password !== confirmPassword) {
+      Alert.alert("Kesalahan", "Kata sandi tidak cocok!");
+      return;
+    }
+
+    // Simulasi reset berhasil
+    Alert.alert("Berhasil", "Kata sandi berhasil diperbarui", [
+      {
+        text: "OK",
+        onPress: () => {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "Login" }],
+          });
+        },
+      },
+    ]);
   };
 
   return (
@@ -90,17 +107,17 @@ export default function PagePwOTP({ navigation }) {
 const styles = StyleSheet.create({
   fullScreen: {
     flex: 1,
-    backgroundColor: "#fff", // background putih penuh
+    backgroundColor: "#fff",
   },
   scrollContainer: {
     flexGrow: 1,
     justifyContent: "center",
-    backgroundColor: "#fff", // scrollView juga putih
+    backgroundColor: "#fff",
   },
   container: {
     padding: 24,
     paddingTop: 60,
-    backgroundColor: "#fff", // kontainer utama putih
+    backgroundColor: "#fff",
   },
   title: {
     fontSize: 24,

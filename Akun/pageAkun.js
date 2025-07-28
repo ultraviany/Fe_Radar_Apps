@@ -1,17 +1,20 @@
+// src/Account/Pageakun.js
 import React, { useState } from 'react';
 import {
   View, Text, TouchableOpacity, StyleSheet, ScrollView, Modal
 } from 'react-native';
 import { Ionicons, MaterialIcons, FontAwesome, Entypo } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const Pageakun = () => {
   const [modalVisible, setModalVisible] = useState(false);
+  const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Akun</Text>
@@ -30,10 +33,30 @@ const Pageakun = () => {
 
         {/* Menu List */}
         <View style={styles.menuContainer}>
-          <MenuItem icon={<MaterialIcons name="edit" size={20} color="#fff" />} label="Kelola Akun" sub="Ubah nama, foto dan informasi" />
-          <MenuItem icon={<Ionicons name="lock-closed" size={20} color="#fff" />} label="Keamanan" sub="Informasi password" />
-          <MenuItem icon={<FontAwesome name="history" size={20} color="#fff" />} label="Aktivitas" sub="Riwayat membaca dan komentar" />
-          <MenuItem icon={<Entypo name="info-with-circle" size={20} color="#fff" />} label="Tentang Aplikasi" sub="Informasi aplikasi" />
+          <MenuItem
+            icon={<MaterialIcons name="edit" size={20} color="#fff" />}
+            label="Kelola Akun"
+            sub="Ubah nama, foto dan informasi"
+            onPress={() => navigation.navigate('KelolaAkun')}
+          />
+          <MenuItem
+            icon={<Ionicons name="lock-closed" size={20} color="#fff" />}
+            label="Keamanan"
+            sub="Informasi password"
+            onPress={() => navigation.navigate('keamanan')}
+          />
+          <MenuItem
+            icon={<FontAwesome name="history" size={20} color="#fff" />}
+            label="Aktivitas"
+            sub="Riwayat membaca dan komentar"
+            onPress={() => navigation.navigate('Activity')}
+          />
+          <MenuItem
+            icon={<Entypo name="info-with-circle" size={20} color="#fff" />}
+            label="Tentang Aplikasi"
+            sub="Informasi aplikasi"
+            onPress={() => navigation.navigate('About')}
+          />
         </View>
 
         {/* Logout Button */}
@@ -55,7 +78,9 @@ const Pageakun = () => {
               <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
                 <Text style={styles.cancelText}>Batal</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.confirmButton}>
+              <TouchableOpacity style={styles.confirmButton} onPress={() => {
+                navigation.replace('Login');
+              }}>
                 <Text style={styles.confirmText}>Ya, Yakin</Text>
               </TouchableOpacity>
             </View>
@@ -67,8 +92,8 @@ const Pageakun = () => {
 };
 
 // Komponen MenuItem
-const MenuItem = ({ icon, label, sub }) => (
-  <TouchableOpacity style={styles.menuItem}>
+const MenuItem = ({ icon, label, sub, onPress }) => (
+  <TouchableOpacity style={styles.menuItem} onPress={onPress}>
     <View style={styles.menuIcon}>{icon}</View>
     <View style={{ flex: 1 }}>
       <Text style={styles.menuLabel}>{label}</Text>
@@ -132,8 +157,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   logoutText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
-
-  // Modal
   modalBackground: {
     flex: 1,
     justifyContent: 'center',

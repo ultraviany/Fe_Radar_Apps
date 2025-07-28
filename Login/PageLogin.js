@@ -27,7 +27,7 @@ export default function PageLogin({ navigation }) {
         }
 
         try {
-            const response = await fetch("http://192.168.0.16:3000/RadarApps/api/v1/login", {
+            const response = await fetch("http://192.168.2.114:3000/RadarApps/api/v1/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, email, password }),
@@ -50,13 +50,13 @@ export default function PageLogin({ navigation }) {
             }
 
             await AsyncStorage.setItem("token", token);
-
             Alert.alert("Login Berhasil");
 
+            // Navigasi berdasarkan peran
             if (role === "ADMIN") {
-                navigation.navigate("PageCRUD");
+                navigation.replace("PageCRUD");
             } else {
-                navigation.navigate("PageEpaper");
+                navigation.replace("MainTabs", { screen: "Home" }); // Tab Home
             }
 
         } catch (error) {
@@ -103,7 +103,7 @@ export default function PageLogin({ navigation }) {
                     secureTextEntry
                 />
 
-                <TouchableOpacity onPress={() => navigation.navigate('PageKonfrimOTP')}>
+                <TouchableOpacity onPress={() => navigation.navigate('ResetPassword')}>
                     <Text style={styles.forgotPassword}>Lupa kata sandi?</Text>
                 </TouchableOpacity>
 

@@ -2,10 +2,17 @@ import React from "react";
 import { View, Image, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
 
-export default function NewsCard({ item, onLike, onSave, isLiked, isNewsSaved }) {
+export default function NewsCard({
+  item,
+  onLike,
+  onSave,
+  isLiked,
+  isNewsSaved,
+  navigation, // <-- Terima navigation
+}) {
   return (
     <View style={styles.card}>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate("PageEpaper")}>
         <Image source={item.image} style={styles.coverImage} />
       </TouchableOpacity>
       <View style={styles.cardFooter}>
@@ -39,7 +46,7 @@ const styles = StyleSheet.create({
   card: {
     width: 160,
     marginRight: 12,
-    backgroundColor: "#gray",
+    backgroundColor: "#f2f2f2", // ganti dari "#gray"
     borderRadius: 12,
     overflow: "hidden",
   },

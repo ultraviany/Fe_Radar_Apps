@@ -7,29 +7,19 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   TextInput,
+  StatusBar,
+  Keyboard,
+  TouchableWithoutFeedback
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function PageComment({ navigation }) {
   const [comments, setComments] = useState([
-    {
-      name: 'Budi Budiman',
-      comment: 'Serem banget ya.. Angka kriminal tahun ini bener-bener di luar nalar',
-    },
-    {
-      name: 'Siti Khadijah',
-      comment:
-        'Kenaikan harga beras yang terus terjadi jelas menjadi alarm bagi ketahanan pangan nasional. Harusnya pemerintah lebih peka!',
-    },
-    {
-      name: 'Andrew Nicholas',
-      comment:
-        'Keren banget, talent anak muda sekarang. Semoga terus berkembang ya...',
-    },
+    { name: 'Budi Budiman', comment: 'Serem banget ya.. Angka kriminal tahun ini bener-bener di luar nalar' },
+    { name: 'Siti Khadijah', comment: 'Kenaikan harga beras yang terus terjadi jelas menjadi alarm bagi ketahanan pangan nasional. Harusnya pemerintah lebih peka!' },
+    { name: 'Andrew Nicholas', comment: 'Keren banget, talent anak muda sekarang. Semoga terus berkembang ya...' },
   ]);
-
   const [newComment, setNewComment] = useState('');
 
   const handleSendComment = () => {
@@ -40,13 +30,14 @@ export default function PageComment({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 1 : 0} // ganti sesuai notch/toolbar
-      >
-        <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : StatusBar.currentHeight || 24}
+    >
+      <StatusBar barStyle="light-content" backgroundColor="#1E4B8A" />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.inner}>
           {/* HEADER */}
           <View style={styles.header}>
             <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
@@ -63,20 +54,15 @@ export default function PageComment({ navigation }) {
 
           <ScrollView
             style={styles.commentList}
+            contentContainerStyle={{ paddingBottom: 20 }}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
             <Text style={styles.commentLabel}>Komentar</Text>
-
             {comments.map((item, index) => (
               <View key={index} style={styles.commentCard}>
                 <View style={styles.commentHeader}>
-                  <Ionicons
-                    name="person-circle"
-                    size={30}
-                    color="#3B82F6"
-                    style={styles.avatar}
-                  />
+                  <Ionicons name="person-circle" size={30} color="#3B82F6" style={styles.avatar} />
                   <Text style={styles.commentName}>{item.name}</Text>
                 </View>
                 <Text style={styles.commentText}>{item.comment}</Text>
@@ -93,6 +79,8 @@ export default function PageComment({ navigation }) {
               placeholderTextColor="#9CA3AF"
               value={newComment}
               onChangeText={setNewComment}
+              returnKeyType="send"
+              onSubmitEditing={handleSendComment}
             />
             <TouchableOpacity onPress={handleSendComment}>
               <Ionicons
@@ -103,10 +91,9 @@ export default function PageComment({ navigation }) {
             </TouchableOpacity>
           </View>
         </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
-
 }
 
 const styles = StyleSheet.create({
@@ -114,16 +101,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F9FAFB',
   },
+  inner: {
+    flex: 1,
+  },
   header: {
     backgroundColor: '#1E4B8A',
-    paddingTop: 90,
+    paddingTop: Platform.OS === 'android' ? 70 : 90,
     paddingBottom: 30,
     alignItems: 'center',
     position: 'relative',
   },
   backButton: {
     position: 'absolute',
-    top: 60,
+    top: 40,
     left: 20,
     zIndex: 1,
   },
@@ -159,7 +149,7 @@ const styles = StyleSheet.create({
   },
   commentList: {
     paddingHorizontal: 20,
-    marginBottom: 70,
+    flex: 1,
   },
   commentCard: {
     backgroundColor: '#fff',
@@ -190,10 +180,6 @@ const styles = StyleSheet.create({
     color: '#111827',
   },
   commentInputArea: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
     backgroundColor: '#F3F4F6',
     paddingVertical: 10,
     paddingHorizontal: 20,

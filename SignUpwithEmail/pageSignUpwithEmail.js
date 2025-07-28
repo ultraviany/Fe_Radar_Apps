@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,37 +7,41 @@ import {
   StyleSheet,
   SafeAreaView,
   Alert,
-} from "react-native";
-import { AntDesign } from "@expo/vector-icons";
+} from 'react-native';
+import { AntDesign } from '@expo/vector-icons';
 
-export default function SignUpWithEmail() {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export default function SignUpWithEmail({ navigation }) {
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleSubmit = () => {
     if (fullName && email && password) {
-      Alert.alert("Berhasil", "User sudah berhasil daftar!");
+      Alert.alert('Berhasil', 'User sudah berhasil daftar!', [
+        {
+          text: 'OK',
+          onPress: () => navigation.replace("MainTabs", { screen: "Home"}), // Navigasi ke HomePage
+        },
+      ]);
     } else {
-      Alert.alert("Gagal", "Semua field harus diisi.");
+      Alert.alert('Gagal', 'Semua field harus diisi.');
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Tombol kembali */}
-      <TouchableOpacity style={styles.backButton}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <AntDesign name="arrowleft" size={24} color="#1E3A8A" />
       </TouchableOpacity>
 
       <View style={styles.innerContainer}>
-        {/* Judul */}
         <Text style={styles.title}>Daftar dengan Email</Text>
         <Text style={styles.subtitle}>
           Buat akun baru untuk mulai mengikuti berita{"\n"}Radar Tulungagung.
         </Text>
 
-        {/* Form Input */}
+        {/* Form */}
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Nama Lengkap</Text>
           <TextInput
@@ -73,7 +77,6 @@ export default function SignUpWithEmail() {
           />
         </View>
 
-        {/* Tombol Daftar */}
         <TouchableOpacity style={styles.button} onPress={handleSubmit}>
           <Text style={styles.buttonText}>Daftar</Text>
         </TouchableOpacity>
@@ -85,10 +88,10 @@ export default function SignUpWithEmail() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
   },
   backButton: {
-    position: "absolute",
+    position: 'absolute',
     top: 50,
     left: 20,
     zIndex: 20,
@@ -96,19 +99,19 @@ const styles = StyleSheet.create({
   innerContainer: {
     flex: 1,
     paddingHorizontal: 24,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   title: {
     fontSize: 20,
-    fontWeight: "bold",
-    color: "#000",
-    textAlign: "center",
+    fontWeight: 'bold',
+    color: '#000',
+    textAlign: 'center',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 14,
-    color: "#555",
-    textAlign: "center",
+    color: '#555',
+    textAlign: 'center',
     marginBottom: 30,
     lineHeight: 20,
   },
@@ -117,46 +120,40 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    fontWeight: "500",
-    color: "#333",
+    fontWeight: '500',
+    color: '#333',
     marginBottom: 8,
   },
   inputBox: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: '#ddd',
     fontSize: 14,
-    color: "#000",
-
-    // Shadow iOS
-    shadowColor: "#000",
+    color: '#000',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-
-    // Elevation Android
     elevation: 4,
   },
   button: {
-    backgroundColor: "#1E3A8A",
+    backgroundColor: '#1E3A8A',
     paddingVertical: 14,
     borderRadius: 12,
-    alignItems: "center",
+    alignItems: 'center',
     marginTop: 10,
-
-    // Shadow tombol
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
     shadowRadius: 6,
     elevation: 5,
   },
   buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
+    color: '#fff',
+    fontWeight: 'bold',
     fontSize: 16,
   },
 });

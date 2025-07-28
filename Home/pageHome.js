@@ -13,9 +13,8 @@ import Header from "./HeaderSection";
 import ContactCard from "./ContactSection";
 import { utamaData, terkiniData } from "./NewsData";
 import NewsSection from "./NewsSection";
-// import NewsSection & NewsCard kalau sudah dipecah juga
 
-export default function HomePage() {
+export default function HomePage({ navigation }) {
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const { toggleSave, isNewsSaved } = useContext(SaveContext);
@@ -49,7 +48,8 @@ export default function HomePage() {
       <Header />
       <View style={{ paddingHorizontal: 16 }}>
         <ContactCard />
-        {/* Tampilkan filter tanggal */}
+
+        {/* Filter tanggal */}
         <View
           style={{
             marginTop: 10,
@@ -72,6 +72,7 @@ export default function HomePage() {
             </Text>
           </TouchableOpacity>
         </View>
+
         {showDatePicker && (
           <DateTimePicker
             value={date}
@@ -80,7 +81,8 @@ export default function HomePage() {
             onChange={onChange}
           />
         )}
-        {/* Di sini nanti panggil NewsSection untuk Utama dan Terkini */}
+
+        {/* Seksi berita utama */}
         <NewsSection
           title="Berita Utama"
           data={utamaData}
@@ -88,8 +90,10 @@ export default function HomePage() {
           onLike={toggleLike}
           onSave={toggleSave}
           isNewsSaved={isNewsSaved}
+          navigation={navigation} // <-- Penting!
         />
 
+        {/* Seksi berita terkini */}
         <NewsSection
           title="Berita Terkini"
           data={terkiniData}
@@ -97,6 +101,7 @@ export default function HomePage() {
           onLike={toggleLike}
           onSave={toggleSave}
           isNewsSaved={isNewsSaved}
+          navigation={navigation} // <-- Penting!
         />
       </View>
     </ScrollView>

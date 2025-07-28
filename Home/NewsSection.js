@@ -2,7 +2,16 @@ import React from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import NewsCard from "./NewsCard";
 
-export default function NewsSection({ title, data, onLike, onSave, isLiked, isNewsSaved, showMoreButton }) {
+export default function NewsSection({
+  title,
+  data,
+  onLike,
+  onSave,
+  isLiked,
+  isNewsSaved,
+  showMoreButton,
+  navigation, // <-- Tambahkan navigation
+}) {
   return (
     <View>
       <View style={styles.sectionHeader}>
@@ -13,7 +22,11 @@ export default function NewsSection({ title, data, onLike, onSave, isLiked, isNe
           </TouchableOpacity>
         )}
       </View>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.cardScroll}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.cardScroll}
+      >
         {data.map((item, index) => (
           <NewsCard
             key={index}
@@ -22,6 +35,7 @@ export default function NewsSection({ title, data, onLike, onSave, isLiked, isNe
             onSave={onSave}
             isLiked={isLiked(item.id)}
             isNewsSaved={isNewsSaved(item.id)}
+            navigation={navigation} // <-- Kirim ke NewsCard
           />
         ))}
       </ScrollView>
