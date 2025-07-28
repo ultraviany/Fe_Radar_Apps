@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  headerTitle: { color: '#fff', fontSize: 18, fontWeight: 'bold', marginLeft: 12 },
+  headerTitle: { color: '#fff', fontSize: 24, fontWeight: 'bold', marginLeft: 12 },
   content: { padding: 20 },
   profileBox: {
     backgroundColor: '#fff',

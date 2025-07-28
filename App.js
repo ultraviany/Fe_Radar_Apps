@@ -1,6 +1,6 @@
 import React from 'react';
-import ResetPassword from './ResetPw/Risetpw';
+import Pageakun from './Akun/pageAkun';
 
 export default function App() {
-  return <ResetPassword />;
+  return <Pageakun />;
 }
