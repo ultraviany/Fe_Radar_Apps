@@ -1,67 +1,49 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { View, StyleSheet } from "react-native";
 import NewsCard from "./NewsCard";
 
 export default function NewsSection({
-  title,
   data,
   onLike,
   onSave,
   isLiked,
   isNewsSaved,
-  showMoreButton,
-  navigation, // <-- Tambahkan navigation
+  navigation,
 }) {
+  // Buat array berisi baris-baris (tiap baris berisi 2 item)
+  const rows = [];
+  for (let i = 0; i < data.length; i += 2) {
+    rows.push(data.slice(i, i + 2));
+  }
+
   return (
-    <View>
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>{title}</Text>
-        {showMoreButton && (
-          <TouchableOpacity>
-            <Text style={styles.moreButton}>Lainnya</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.cardScroll}
-      >
-        {data.map((item, index) => (
-          <NewsCard
-            key={index}
-            item={item}
-            onLike={onLike}
-            onSave={onSave}
-            isLiked={isLiked(item.id)}
-            isNewsSaved={isNewsSaved(item.id)}
-            navigation={navigation} // <-- Kirim ke NewsCard
-          />
-        ))}
-      </ScrollView>
+    <View style={styles.container}>
+      {rows.map((row, rowIndex) => (
+        <View key={rowIndex} style={styles.row}>
+          {row.map((item) => (
+            <NewsCard
+              key={item.id}
+              item={item}
+              onLike={onLike}
+              onSave={onSave}
+              isLiked={isLiked(item.id)}
+              isNewsSaved={isNewsSaved(item.id)}
+              navigation={navigation}
+            />
+          ))}
+        </View>
+      ))}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  sectionHeader: {
+  container: {
+    paddingBottom: 16,
+  },
+  row: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 14,
-    marginBottom: 10,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  moreButton: {
-    fontSize: 14,
-    color: "#2F5C9A",
-    fontWeight: "500",
-  },
-  cardScroll: {
-    flexDirection: "row",
-    marginBottom: 10,
+    marginBottom: 16,
   },
 });
