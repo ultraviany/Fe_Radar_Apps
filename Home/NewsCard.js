@@ -1,6 +1,16 @@
 import React from "react";
-import { View, Image, Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Image,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
+
+const screenWidth = Dimensions.get("window").width;
+const cardWidth = (screenWidth - 16 * 3) / 2;
 
 export default function NewsCard({
   item,
@@ -8,32 +18,48 @@ export default function NewsCard({
   onSave,
   isLiked,
   isNewsSaved,
-  navigation, // <-- Terima navigation
+  navigation,
 }) {
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, { width: cardWidth }]}>
       <TouchableOpacity onPress={() => navigation.navigate("PageEpaper")}>
-        <Image source={item.image} style={styles.coverImage} />
+        <Image
+          source={item.image}
+          style={styles.coverImage}
+          resizeMode="cover"
+        />
       </TouchableOpacity>
-      <View style={styles.cardFooter}>
-        <View style={styles.iconRow}>
-          <Ionicons name="calendar-outline" size={14} color="#2F5C9A" />
-          <Text style={styles.date}>{item.date}</Text>
+
+      {/* Bagian bawah putih */}
+      <View style={styles.footer}>
+        {/* Region */}
+        <View style={styles.row}>
+          <Ionicons name="newspaper-outline" size={14} color="#2F5C9A" />
+          <Text style={styles.regionText}>{item.region}</Text>
         </View>
+
+        {/* Date */}
+        <View style={[styles.row, { marginTop: 6 }]}>
+          <Ionicons name="calendar-outline" size={14} color="#2F5C9A" />
+          <Text style={styles.dateText}>{item.date}</Text>
+        </View>
+
+        {/* Icons */}
         <View style={styles.iconRow}>
           <TouchableOpacity onPress={() => onLike(item.id)}>
             <AntDesign
               name={isLiked ? "heart" : "hearto"}
-              size={16}
+              size={18}
               color={isLiked ? "red" : "gray"}
-              style={styles.iconMargin}
+              style={styles.icon}
             />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => onSave(item)}>
             <Ionicons
               name={isNewsSaved ? "bookmark" : "bookmark-outline"}
-              size={16}
+              size={18}
               color={isNewsSaved ? "#2F5C9A" : "gray"}
+              style={styles.icon}
             />
           </TouchableOpacity>
         </View>
@@ -44,35 +70,54 @@ export default function NewsCard({
 
 const styles = StyleSheet.create({
   card: {
-    width: 160,
-    marginRight: 12,
-    backgroundColor: "#f2f2f2", // ganti dari "#gray"
+    width: 180, // ukuran diperbesar
+    height: 310, // ukuran diperbesar
+    marginTop:8,
     borderRadius: 12,
+    backgroundColor: "#fff",
     overflow: "hidden",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 8,
+    elevation: 4,
   },
   coverImage: {
     width: "100%",
-    height: 230,
+    height: 240,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
   },
-  cardFooter: {
+  footer: {
+    backgroundColor: "#fff",
+    padding: 12,
+    borderBottomLeftRadius: 12,
+    borderBottomRightRadius: 12,
+    position: "relative",
+  },
+  row: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 8,
-    paddingBottom: 12,
-    paddingTop: 12,
+  },
+  regionText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#2F5C9A",
+    marginLeft: 6,
+  },
+  dateText: {
+    fontSize: 12,
+    color: "gray",
+    marginLeft: 6,
+    fontWeight: "500",
   },
   iconRow: {
     flexDirection: "row",
-    alignItems: "center",
+    position: "absolute",
+    right: 10,
+    bottom: 10,
   },
-  date: {
-    fontSize: 12,
-    marginLeft: 6,
-    color: "gray",
-    fontWeight: "bold",
-  },
-  iconMargin: {
-    marginHorizontal: 8,
+  icon: {
+    marginLeft: 3,
   },
 });

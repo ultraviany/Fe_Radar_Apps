@@ -1,107 +1,95 @@
 import React, { useState, useContext } from "react";
-import {
-  ScrollView,
-  View,
-  TouchableOpacity,
-  Text,
-  Platform,
-} from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { Ionicons } from "@expo/vector-icons";
-import { SaveContext } from "../Context/SaveContext";
-import Header from "./HeaderSection";
-import ContactCard from "./ContactSection";
-import { utamaData, terkiniData } from "./NewsData";
+import { ScrollView, View } from "react-native";
+import Header from "./HeaderSection"; // pastikan path sesuai
+import ContactCard from "./ContactSection"; // pastikan path sesuai
+import NewsTabBar from "./NewsTabBar";
 import NewsSection from "./NewsSection";
+import {
+  tulungagungNews,
+  blitarNews,
+  trenggalekNews,
+} from "./NewsData";
+import { SaveContext } from "../Context/SaveContext";
 
 export default function HomePage({ navigation }) {
-  const [date, setDate] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [activeTab, setActiveTab] = useState("All Epaper");
   const { toggleSave, isNewsSaved } = useContext(SaveContext);
   const [likedItems, setLikedItems] = useState([]);
 
+
   const toggleLike = (id) => {
-    const isLiked = likedItems.includes(id);
-    if (isLiked) {
-      setLikedItems(likedItems.filter((i) => i !== id));
-    } else {
-      setLikedItems([...likedItems, id]);
+    setLikedItems((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
+
+  const getDataByTab = () => {
+
+    if (activeTab === "All Epaper") {
+      const combinedNews = [
+        ...tulungagungNews,
+        ...blitarNews,
+        ...trenggalekNews,
+      ];
+
+      return combinedNews.sort((a, b) => {
+        const dateA = new Date(convertToISO(a.date));
+        const dateB = new Date(convertToISO(b.date));
+        return dateB - dateA;
+      });
+    }
+
+    switch (activeTab) {
+      case "Radar Tulungagung":
+        return tulungagungNews;
+      case "Radar Blitar":
+        return blitarNews;
+      case "Radar Trenggalek":
+        return trenggalekNews;
+      default:
+        return [];
     }
   };
 
-  const isLiked = (id) => likedItems.includes(id);
+  const convertToISO = (dateStr) => {
+    const [day, monthName, year] = dateStr.split(" ");
+    const monthMap = {
+      Januari: "01",
+      Februari: "02",
+      Maret: "03",
+      April: "04",
+      Mei: "05",
+      Juni: "06",
+      Juli: "07",
+      Agustus: "08",
+      September: "09",
+      Oktober: "10",
+      November: "11",
+      Desember: "12",
+    };
 
-  const onChange = (event, selectedDate) => {
-    setShowDatePicker(false);
-    if (selectedDate) setDate(selectedDate);
+    const month = monthMap[monthName];
+    return `${year}-${month}-${day}`;
   };
 
-  const formatDate = (date) =>
-    date.toLocaleDateString("id-ID", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
+  const newsData = getDataByTab();
 
   return (
-    <ScrollView>
-      <Header />
-      <View style={{ paddingHorizontal: 16 }}>
-        <ContactCard />
+    <ScrollView style={{ paddingHorizontal: 16 }}>
+      <View style={{ marginHorizontal: -16 }}>
+        <Header />
+      </View>
+      <ContactCard />
+      <NewsTabBar activeTab={activeTab} setActiveTab={setActiveTab} />
 
-        {/* Filter tanggal */}
-        <View
-          style={{
-            marginTop: 10,
-            flexDirection: "row",
-            alignItems: "center",
-            borderWidth: 1,
-            borderColor: "#ccc",
-            borderRadius: 8,
-            paddingHorizontal: 12,
-            paddingVertical: 6,
-          }}
-        >
-          <Ionicons name="calendar-outline" size={20} color="#2F5C9A" />
-          <TouchableOpacity
-            style={{ marginLeft: 12, flex: 1 }}
-            onPress={() => setShowDatePicker(true)}
-          >
-            <Text style={{ color: "gray" }}>
-              {date ? formatDate(date) : "Pilih tanggal"}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        {showDatePicker && (
-          <DateTimePicker
-            value={date}
-            mode="date"
-            display={Platform.OS === "ios" ? "spinner" : "default"}
-            onChange={onChange}
-          />
-        )}
-
-        {/* Seksi berita utama */}
+      <View>
         <NewsSection
-          title="Berita Utama"
-          data={utamaData}
-          isLiked={isLiked}
+          data={newsData}
           onLike={toggleLike}
+          isLiked={(id) => likedItems.includes(id)}
           onSave={toggleSave}
           isNewsSaved={isNewsSaved}
-          navigation={navigation} // <-- Penting!
-        />
-
-        {/* Seksi berita terkini */}
-        <NewsSection
-          title="Berita Terkini"
-          data={terkiniData}
-          isLiked={isLiked}
-          onLike={toggleLike}
-          onSave={toggleSave}
-          isNewsSaved={isNewsSaved}
-          navigation={navigation} // <-- Penting!
+          navigation={navigation}
         />
       </View>
     </ScrollView>
