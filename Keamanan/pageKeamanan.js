@@ -12,25 +12,25 @@ import { Ionicons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
-const Keamananpage = () => {
+const Keamananpage = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
+      {/* 🔵 Header */}
       <View style={styles.header}>
         <Ionicons name="arrow-back" size={24} color="#fff" />
         <Text style={styles.headerTitle}>Keamanan</Text>
       </View>
 
-      {/* Gambar Gembok */}
+      {/* 🔒 Gambar Gembok */}
       <View style={styles.lockContainer}>
         <Image
-          source={require('../assets/forgotpassword.png')} // Ganti path gambar jika perlu
+          source={require('../assets/forgotpassword.png')}
           style={styles.lockImage}
           resizeMode="contain"
         />
       </View>
 
-      {/* Box Info Akun */}
+      {/* 👤 Info Akun */}
       <View style={styles.accountBox}>
         <Ionicons name="person-circle-outline" size={80} color="#777" />
         <View style={{ marginLeft: 12 }}>
@@ -46,15 +46,18 @@ const Keamananpage = () => {
         </View>
       </View>
 
-      {/* Lupa Kata Sandi */}
+      {/* ❓ Teks Lupa Password */}
       <Text style={styles.forgotTitle}>Lupa Kata Sandi?</Text>
       <Text style={styles.forgotDesc}>
-        Link untuk mengatur ulang kata sandi akan{'\n'}dikirimkan pada gmail anda.
+        Kode OTP untuk mengatur ulang kata sandi akan{'\n'}dikirimkan pada email anda.
       </Text>
 
-      {/* Tombol */}
-      <TouchableOpacity style={styles.resetButton}>
-        <Text style={styles.resetButtonText}>Kirim Link Reset</Text>
+      {/* 🔁 Tombol Navigasi ke GantiPassword */}
+      <TouchableOpacity
+        style={styles.resetButton}
+        onPress={() => navigation.navigate("PageKonfrimOTP")}
+      >
+        <Text style={styles.resetButtonText}>Kirim Kode OTP</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );

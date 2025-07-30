@@ -1,20 +1,43 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     View,
     Text,
     TextInput,
     TouchableOpacity,
-    Image,
+    Alert,
     StyleSheet,
     SafeAreaView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const GantiPassword = () => {
+    const navigation = useNavigation();
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+
+    const handleSavePassword = () => {
+        if (!newPassword || !confirmPassword) {
+            Alert.alert("Peringatan", "Silakan isi kedua kolom kata sandi.");
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            Alert.alert("Peringatan", "Kata sandi tidak cocok.");
+            return;
+        }
+
+        Alert.alert("Berhasil", "Kata sandi berhasil diperbarui.");
+        setNewPassword('');
+        setConfirmPassword('');
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <Ionicons name="arrow-back" size={24} color="#fff" />
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Ionicons name="arrow-back" size={24} color="#fff" />
+                </TouchableOpacity>
                 <Text style={styles.headerText}>Keamanan</Text>
             </View>
 
@@ -39,6 +62,8 @@ const GantiPassword = () => {
                         placeholder="Masukkan kata sandi baru"
                         secureTextEntry
                         style={styles.input}
+                        value={newPassword}
+                        onChangeText={setNewPassword}
                     />
                     <Ionicons name="eye-outline" size={20} color="#1E4B8A" />
                 </View>
@@ -49,18 +74,19 @@ const GantiPassword = () => {
                         placeholder="Ketik ulang kata sandi baru"
                         secureTextEntry
                         style={styles.input}
+                        value={confirmPassword}
+                        onChangeText={setConfirmPassword}
                     />
                     <Ionicons name="eye-outline" size={20} color="#1E4B8A" />
                 </View>
 
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={handleSavePassword}>
                     <Text style={styles.buttonText}>Simpan Kata Sandi</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
     );
 };
-
 
 const styles = StyleSheet.create({
     container: {
@@ -86,10 +112,9 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
         marginTop: 20,
         borderWidth: 1,
-        borderColor: '#ddd',
+        borderColor: '#1E4B8A',
         padding: 15,
         borderRadius: 10,
-        borderColor: '#1E4B8A',
         flexDirection: 'row',
         alignItems: 'center',
         shadowColor: '#000',
@@ -126,9 +151,8 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 14,
         marginBottom: 6,
-        color: '#',
         marginTop: 12,
-        fontWeight: "medium",
+        fontWeight: '500',
     },
     inputWrapper: {
         flexDirection: 'row',
@@ -158,7 +182,7 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#fff',
         fontWeight: '600',
-    }
+    },
 });
 
 export default GantiPassword;

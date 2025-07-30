@@ -2,40 +2,33 @@ import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { AntDesign } from '@expo/vector-icons';
-import { FontAwesome } from '@expo/vector-icons';
 
-export default function Signup() {
+export default function PageSignUp({ navigation }) {
   return (
     <View style={styles.container}>
       <Image source={require('../assets/image22.png')} style={styles.logo} />
       <Text style={styles.title}>Daftar Sekarang!</Text>
       <Text style={styles.subtitle}>Biar kamu selalu update kabar Tulungagung.</Text>
 
-      <TouchableOpacity style={styles.emailButton}>
+      <TouchableOpacity
+        style={styles.emailButton}
+        onPress={() => navigation.navigate('SignUpWithEmail')}
+      >
         <AntDesign name="mail" size={24} color="#fff" style={{ marginRight: 10 }} />
         <Text style={styles.emailButtonText}>Daftar dengan Email</Text>
       </TouchableOpacity>
 
-      <View style={styles.dividerContainer}>
-        <View style={styles.dividerLine} />
-        <Text style={styles.orText}>atau</Text>
-        <View style={styles.dividerLine} />
-      </View>
-
-      <TouchableOpacity style={styles.googleButton}>
-        <FontAwesome name="google" size={20} color="#000" style={{ marginRight: 10 }} />
-        <Text style={styles.googleButtonText}>Daftar dengan Google</Text>
-      </TouchableOpacity>
-
       <Text style={styles.loginText}>
-        Sudah punya akun? <Text style={styles.loginLink}>Masuk</Text>
+        Sudah punya akun?{' '}
+        <Text style={styles.loginLink} onPress={() => navigation.navigate('Login')}>
+          Masuk
+        </Text>
       </Text>
 
       <StatusBar style="auto" />
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -71,46 +64,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: '100%',
     justifyContent: 'center',
-    marginBottom: 8, // jarak ke "atau"
+    marginBottom: 20,
     elevation: 2,
   },
   emailButtonText: {
     color: '#fff',
     fontSize: 16,
-  },
-  dividerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 4,       // agar tidak terlalu jauh ke bawah
-    marginBottom: 15,   // jarak ke tombol Google
-    width: '100%',
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#ccc',
-  },
-  orText: {
-    marginHorizontal: 10,
-    fontSize: 14,
-    color: '#999',
-  },
-  googleButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    width: '100%',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    marginBottom: 20,
-  },
-  googleButtonText: {
-    fontSize: 16,
-    color: '#000',
   },
   loginText: {
     fontSize: 14,
