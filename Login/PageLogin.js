@@ -27,7 +27,7 @@ export default function PageLogin({ navigation }) {
         }
 
         try {
-            const response = await fetch("http://192.168.2.114:3000/RadarApps/api/v1/login", {
+            const response = await fetch("http://192.168.0.21:3000/RadarApps/api/v1/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, email, password }),

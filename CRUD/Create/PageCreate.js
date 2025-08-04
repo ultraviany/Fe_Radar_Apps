@@ -7,6 +7,8 @@ import {
   Image,
   Platform,
   Alert,
+  Modal,
+  FlatList,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
@@ -18,6 +20,14 @@ export default function PageCreate({ navigation }) {
   const [pdfFile, setPdfFile] = useState(null);
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedWilayah, setSelectedWilayah] = useState(null);
+  const [wilayahModalVisible, setWilayahModalVisible] = useState(false);
+
+  const wilayahList = [
+    'Radar Tulungagung',
+    'Radar Trenggalek',
+    'Radar Blitar',
+  ];
 
   const pickCoverImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -49,8 +59,8 @@ export default function PageCreate({ navigation }) {
   };
 
   const handleSave = () => {
-    if (!coverUri || !pdfFile) {
-      Alert.alert('Lengkapi Data', 'Silakan unggah cover dan file PDF terlebih dahulu.');
+    if (!coverUri || !pdfFile || !selectedWilayah) {
+      Alert.alert('Lengkapi Data', 'Silakan unggah cover, file PDF, dan pilih wilayah terlebih dahulu.');
       return;
     }
 
@@ -58,6 +68,7 @@ export default function PageCreate({ navigation }) {
     console.log('Cover URI:', coverUri);
     console.log('PDF File:', pdfFile);
     console.log('Tanggal:', formatDate(date));
+    console.log('Wilayah:', selectedWilayah);
   };
 
   return (
@@ -97,6 +108,50 @@ export default function PageCreate({ navigation }) {
         </TouchableOpacity>
         <Text style={styles.note}>*pastikan format file yang Anda kirim .pdf</Text>
 
+        {/* WILAYAH */}
+        <Text style={styles.label}>Wilayah</Text>
+        <TouchableOpacity
+          style={styles.input}
+          onPress={() => setWilayahModalVisible(true)}
+        >
+          <View style={styles.dateInput}>
+            <Text>{selectedWilayah || '📍 Pilih wilayah asal e-paper'}</Text>
+            <Ionicons name="chevron-down" size={20} color="#000" />
+          </View>
+        </TouchableOpacity>
+
+        <Modal
+          visible={wilayahModalVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setWilayahModalVisible(false)}
+        >
+          <TouchableOpacity
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPressOut={() => setWilayahModalVisible(false)}
+          >
+            <View style={styles.modalContent}>
+              <FlatList
+                data={wilayahList}
+                keyExtractor={(item) => item}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelectedWilayah(item);
+                      setWilayahModalVisible(false);
+                    }}
+                    style={styles.modalItem}
+                  >
+                    <Text style={{ fontSize: 16 }}>{item}</Text>
+                  </TouchableOpacity>
+                )}
+              />
+            </View>
+          </TouchableOpacity>
+        </Modal>
+
+        {/* TANGGAL */}
         <Text style={styles.label}>Tanggal Terbit E-paper</Text>
         <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.input}>
           <View style={styles.dateInput}>
@@ -195,4 +250,28 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   saveText: { color: '#fff', fontWeight: 'bold' },
+
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+  },
+  modalItem: {
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
 });

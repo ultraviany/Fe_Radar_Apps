@@ -5,17 +5,23 @@ import {
     TouchableOpacity,
     StyleSheet,
     Platform,
-    Image,
+    Modal,
+    FlatList,
+    Alert,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import { Ionicons, Entypo } from '@expo/vector-icons';
 
 export default function PageUpdate({ navigation, route }) {
+    const { data } = route.params || {};
 
-    const { data } = route.params || {}; // ← terima data dari HomeUpdate
-    const [cover, setCover] = useState(null);
-    const [pdf, setPdf] = useState(null);
+    const [cover, setCover] = useState(data?.cover || null);
+    const [pdf, setPdf] = useState(data?.pdf || null);
+    const [selectedWilayah, setSelectedWilayah] = useState(data?.wilayah || null);
+    const [wilayahModalVisible, setWilayahModalVisible] = useState(false);
+
+    const wilayahList = ['Radar Tulungagung', 'Radar Trenggalek', 'Radar Blitar'];
 
     const pickCoverFromGallery = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -50,13 +56,15 @@ export default function PageUpdate({ navigation, route }) {
     };
 
     const handleSave = () => {
-        if (!cover || !pdf) {
-            alert('Silakan unggah cover dan PDF terlebih dahulu');
+        if (!cover || !pdf || !selectedWilayah) {
+            Alert.alert('Lengkapi Data', 'Silakan unggah cover, file PDF, dan pilih wilayah terlebih dahulu.');
             return;
         }
 
-        alert('Perubahan berhasil disimpan!');
-        // TODO: Kirim data ke backend jika perlu
+        Alert.alert('Berhasil', 'Perubahan berhasil disimpan!');
+        console.log('Cover:', cover);
+        console.log('PDF:', pdf);
+        console.log('Wilayah:', selectedWilayah);
     };
 
     return (
@@ -78,7 +86,7 @@ export default function PageUpdate({ navigation, route }) {
                 <Text style={styles.title}>Edit Berita</Text>
                 <Text style={styles.desc}>Pastikan form yang diisi sesuai dengan judul yang tertera.</Text>
 
-                {/* Upload Cover */}
+                {/* Cover */}
                 <Text style={styles.label}>Edit Cover E-paper</Text>
                 <TouchableOpacity style={styles.uploadBox} onPress={pickCoverFromGallery}>
                     <Entypo name="image" size={24} color="#aaa" />
@@ -88,17 +96,57 @@ export default function PageUpdate({ navigation, route }) {
                 </TouchableOpacity>
                 <Text style={styles.note}>*maksimal 100MB</Text>
 
-                {/* Upload PDF */}
-                <Text style={styles.label}>Edit Pdf E-paper</Text>
+                {/* PDF */}
+                <Text style={styles.label}>Edit PDF E-paper</Text>
                 <TouchableOpacity style={styles.uploadBox} onPress={handlePdfUpload}>
                     <Ionicons name="document-text" size={24} color="#aaa" />
                     <Text style={styles.uploadText}>
-                        {pdf ? pdf.name : 'Upload pdf e-paper'}
+                        {pdf ? pdf.name : 'Upload PDF e-paper'}
                     </Text>
                 </TouchableOpacity>
-                <Text style={styles.note}>*pastikan format file yang anda kirim .pdf</Text>
+                <Text style={styles.note}>*pastikan format file yang Anda kirim .pdf</Text>
 
-                {/* Submit Button */}
+                {/* Wilayah */}
+                <Text style={styles.label}>Wilayah</Text>
+                <TouchableOpacity style={styles.input} onPress={() => setWilayahModalVisible(true)}>
+                    <View style={styles.row}>
+                        <Text>{selectedWilayah || '📍 Pilih wilayah asal e-paper'}</Text>
+                        <Ionicons name="chevron-down" size={20} color="#000" />
+                    </View>
+                </TouchableOpacity>
+
+                <Modal
+                    visible={wilayahModalVisible}
+                    transparent
+                    animationType="fade"
+                    onRequestClose={() => setWilayahModalVisible(false)}
+                >
+                    <TouchableOpacity
+                        style={styles.modalOverlay}
+                        activeOpacity={1}
+                        onPressOut={() => setWilayahModalVisible(false)}
+                    >
+                        <View style={styles.modalContent}>
+                            <FlatList
+                                data={wilayahList}
+                                keyExtractor={(item) => item}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity
+                                        onPress={() => {
+                                            setSelectedWilayah(item);
+                                            setWilayahModalVisible(false);
+                                        }}
+                                        style={styles.modalItem}
+                                    >
+                                        <Text style={{ fontSize: 16 }}>{item}</Text>
+                                    </TouchableOpacity>
+                                )}
+                            />
+                        </View>
+                    </TouchableOpacity>
+                </Modal>
+
+                {/* Simpan */}
                 <TouchableOpacity style={styles.button} onPress={handleSave}>
                     <Text style={styles.buttonText}>Simpan Perubahan</Text>
                 </TouchableOpacity>
@@ -108,10 +156,7 @@ export default function PageUpdate({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#F9FAFB',
-    },
+    container: { flex: 1, backgroundColor: '#F9FAFB' },
     header: {
         backgroundColor: '#1E4B8A',
         paddingTop: Platform.OS === 'ios' ? 90 : 70,
@@ -123,7 +168,6 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: Platform.OS === 'ios' ? 60 : 40,
         left: 20,
-        zIndex: 1,
     },
     headerTitle: {
         fontSize: 35,
@@ -188,6 +232,19 @@ const styles = StyleSheet.create({
         color: '#888',
         marginBottom: 20,
     },
+    input: {
+        backgroundColor: '#fff',
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: '#e5e7eb',
+        padding: 14,
+        marginBottom: 20,
+    },
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
     button: {
         backgroundColor: '#1E4B8A',
         paddingVertical: 15,
@@ -203,5 +260,22 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: 'bold',
         fontSize: 16,
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.4)',
+        justifyContent: 'center',
+        padding: 20,
+    },
+    modalContent: {
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        paddingVertical: 10,
+    },
+    modalItem: {
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: '#eee',
     },
 });
