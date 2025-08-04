@@ -20,7 +20,7 @@ export default function SavePage({ navigation }) {
         style={styles.saveIcon}
         onPress={() => toggleSave(item)}
       >
-        <Ionicons name="bookmark" size={16} color="#2F5C9A" />
+        <Ionicons name="bookmark" size={16} color="#1E4B8A" />
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate('PageEpaper', { item })}>
@@ -28,11 +28,17 @@ export default function SavePage({ navigation }) {
       </TouchableOpacity>
 
       <View style={styles.infoContainer}>
+        <View style={styles.regionRow}>
+          <Ionicons name="newspaper-outline" size={14} color="#1E4B8A" />
+          <Text style={styles.region}>{item.region}</Text>
+        </View>
         <View style={styles.dateRow}>
-          <Ionicons name="calendar-outline" size={14} color="#2F5C9A" />
+          <Ionicons name="calendar-outline" size={14} color="#1E4B8A" />
           <Text style={styles.date}>{item.date}</Text>
         </View>
       </View>
+
+
     </View>
   );
 
@@ -64,12 +70,12 @@ export default function SavePage({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#2F5C9A" },
+  container: { flex: 1, backgroundColor: "#1E4B8A" },
   header: {
     paddingTop: 50,
     paddingBottom: 20,
     paddingHorizontal: 16,
-    backgroundColor: "#2F5C9A",
+    backgroundColor: "#1E4B8A",
   },
   headerTextContainer: { flexDirection: "column" },
   title: {
@@ -100,10 +106,17 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   card: {
-    backgroundColor: "#f4f4f4",
+    backgroundColor: "#ffffffff",
     borderRadius: 12,
     flex: 0.48,
     overflow: "hidden",
+    backgroundColor: "#fff",
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 8,
+    elevation: 4,
   },
   saveIcon: {
     position: "absolute",
@@ -137,5 +150,16 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingBottom: 0,
+  },
+  regionRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 4,
+  },
+  region: {
+    fontSize: 13,
+    color: "#1E4B8A",
+    fontWeight: "600",
+    marginLeft: 6,
   },
 });
