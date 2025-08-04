@@ -3,7 +3,6 @@ import {
   View,
   Text,
   FlatList,
-  Image,
   StyleSheet,
   TouchableOpacity,
   Platform,
@@ -13,6 +12,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 import cover1 from '../../assets/cover1.png';
 import cover2 from '../../assets/cover2.png';
+import NewsCard from '../../Home/NewsCard';
 
 const allData = [
   {
@@ -20,12 +20,14 @@ const allData = [
     image: cover1,
     date: '10 Juli 2025',
     rawDate: new Date(2025, 6, 10),
+    region: 'Tulungagung',
   },
   {
     id: '2',
     image: cover2,
     date: '14 Juli 2025',
     rawDate: new Date(2025, 6, 14),
+    region: 'Blitar',
   },
 ];
 
@@ -47,15 +49,11 @@ export default function PageRead({ navigation }) {
     : allData;
 
   const renderItem = ({ item }) => (
-    <View style={styles.card}>
-      <Image source={item.image} style={styles.image} />
-      <View style={styles.cardFooter}>
-        <View style={styles.iconWrapper}>
-          <Ionicons name="calendar" size={13} color="#1E3A8A" />
-        </View>
-        <Text style={styles.dateText}>{item.date}</Text>
-      </View>
-    </View>
+    <NewsCard
+      item={item}
+      navigation={navigation}
+      // Tidak mengirim onLike, onSave, isLiked, isNewsSaved => maka ikon tidak muncul
+    />
   );
 
   return (
@@ -143,6 +141,7 @@ const styles = StyleSheet.create({
   list: {
     paddingHorizontal: 16,
     paddingTop: 20,
+    paddingBottom: 20,
   },
   filterButton: {
     flexDirection: 'row',
@@ -163,48 +162,6 @@ const styles = StyleSheet.create({
     color: '#1E293B',
     fontWeight: '500',
     fontSize: 15,
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    overflow: 'hidden',
-    marginBottom: 20,
-    width: '48%',
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 4,
-  },
-  image: {
-    width: '100%',
-    height: 270,
-    resizeMode: 'cover',
-  },
-  cardFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    backgroundColor: '#F9FAFB',
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-  },
-  iconWrapper: {
-    backgroundColor: '#fff',
-    padding: 5,
-    borderRadius: 50,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-    marginRight: 6,
-  },
-  dateText: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: '#1E293B',
-    flex: 1,
-    marginLeft: 6,
   },
   emptyText: {
     textAlign: 'center',

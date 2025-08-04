@@ -3,7 +3,6 @@ import {
   View,
   Text,
   FlatList,
-  Image,
   StyleSheet,
   TouchableOpacity,
   Platform,
@@ -13,19 +12,22 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 import cover1 from '../../assets/cover1.png';
 import cover2 from '../../assets/cover2.png';
+import NewsCard from '../../Home/NewsCard';
 
 const allData = [
   {
     id: '1',
     image: cover1,
     date: '10 Juli 2025',
-    rawDate: new Date(2025, 6, 10), // bulan 6 = Juli
+    rawDate: new Date(2025, 6, 10),
+    region: 'Tulungagung',
   },
   {
     id: '2',
     image: cover2,
     date: '14 Juli 2025',
     rawDate: new Date(2025, 6, 14),
+    region: 'Blitar',
   },
 ];
 
@@ -35,7 +37,9 @@ export default function HomeUpdate({ navigation }) {
 
   const handleDateChange = (event, date) => {
     setShowPicker(false);
-    if (date) setSelectedDate(date);
+    if (date) {
+      setSelectedDate(date);
+    }
   };
 
   const filteredData = selectedDate
@@ -45,21 +49,11 @@ export default function HomeUpdate({ navigation }) {
     : allData;
 
   const renderItem = ({ item }) => (
-    <View style={styles.card}>
-      <Image source={item.image} style={styles.image} />
-      <View style={styles.cardFooter}>
-        <View style={styles.iconWrapper}>
-          <Ionicons name="calendar" size={13} color="#1E3A8A" />
-        </View>
-        <Text style={styles.dateText}>{item.date}</Text>
-        <TouchableOpacity
-          style={styles.editButton}
-          onPress={() => navigation.navigate('PageUpdate', { item })}
-        >
-          <Ionicons name="create-outline" size={16} color="#1D4ED8" />
-        </TouchableOpacity>
-      </View>
-    </View>
+    <NewsCard
+      item={item}
+      navigation={navigation}
+      showEditButton={true}
+    />
   );
 
   return (
@@ -144,6 +138,11 @@ const styles = StyleSheet.create({
   },
   yellowText: { color: '#efbe1eff', fontWeight: 'bold' },
   whiteText: { color: '#fff', fontWeight: 'bold' },
+  list: {
+    paddingHorizontal: 16,
+    paddingTop: 20,
+    paddingBottom: 20,
+  },
   filterButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -163,62 +162,6 @@ const styles = StyleSheet.create({
     color: '#1E293B',
     fontWeight: '500',
     fontSize: 15,
-  },
-  list: {
-    paddingHorizontal: 16,
-    paddingTop: 20,
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    overflow: 'hidden',
-    marginBottom: 20,
-    width: '48%',
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 4,
-  },
-  image: {
-    width: '100%',
-    height: 270,
-    resizeMode: 'cover',
-  },
-  cardFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    backgroundColor: '#F9FAFB',
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    justifyContent: 'space-between',
-  },
-  iconWrapper: {
-    backgroundColor: '#fff',
-    padding: 5,
-    borderRadius: 50,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-    marginRight: 6,
-  },
-  dateText: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: '#1E293B',
-    flex: 1,
-    marginLeft: 6,
-  },
-  editButton: {
-    backgroundColor: '#fff',
-    padding: 6,
-    borderRadius: 50,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
   },
   emptyText: {
     textAlign: 'center',

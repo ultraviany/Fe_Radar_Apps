@@ -20,12 +20,12 @@ const KelolaAkun = () => {
       <StatusBar backgroundColor="#1E4B8A" barStyle="light-content" />
 
       {/* Header */}
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Icon name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Kelola Akun</Text>
-      </View>
+      </View> */}
 
       <ScrollView contentContainerStyle={styles.container}>
         {/* Foto Profil */}

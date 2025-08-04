@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
-    borderColor: "#2F5C9A",
+    borderColor: "#1E4B8A",
     borderWidth:1,
   },
   time: {
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   detailBtn: {
-    backgroundColor: "#2F5C9A",
+    backgroundColor: "#1E4B8A",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,

@@ -5,19 +5,35 @@ import {
   StyleSheet,
   TouchableOpacity,
   Platform,
+  Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function PageCRUD() {
   const navigation = useNavigation();
+
+  const handleLogout = async () => {
+    Alert.alert("Konfirmasi Logout", "Apakah Anda yakin ingin keluar?", [
+      { text: "Batal", style: "cancel" },
+      {
+        text: "Keluar",
+        style: "destructive",
+        onPress: async () => {
+          await AsyncStorage.removeItem("token");
+          navigation.replace("Login");
+        },
+      },
+    ]);
+  };
 
   return (
     <View style={styles.container}>
       {/* HEADER */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+        <TouchableOpacity onPress={handleLogout} style={styles.backButton}>
+          <Ionicons name="log-out-outline" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>EPAPER</Text>
         <Text style={styles.headerSubtitle}>

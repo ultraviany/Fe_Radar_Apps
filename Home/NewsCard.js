@@ -19,6 +19,9 @@ export default function NewsCard({
   isLiked,
   isNewsSaved,
   navigation,
+  showEditButton = false,
+  showDeleteButton = false,
+  onDelete,
 }) {
   return (
     <View style={[styles.card, { width: cardWidth }]}>
@@ -32,37 +35,59 @@ export default function NewsCard({
 
       {/* Bagian bawah putih */}
       <View style={styles.footer}>
+        {/* Tombol Edit */}
+        {showEditButton && (
+          <TouchableOpacity
+            style={[styles.editButton, { right: 8 }]}
+            onPress={() => navigation.navigate("PageUpdate", { item })}
+          >
+            <Ionicons name="create-outline" size={18} color="#1E4B8A" />
+          </TouchableOpacity>
+        )}
+
+        {/* Tombol Hapus */}
+        {showDeleteButton && (
+          <TouchableOpacity
+            style={[styles.editButton, { right: 8 }]}
+            onPress={() => onDelete(item)}
+          >
+            <Ionicons name="trash-outline" size={18} color="#1E4B8A" />
+          </TouchableOpacity>
+        )}
+
         {/* Region */}
         <View style={styles.row}>
-          <Ionicons name="newspaper-outline" size={14} color="#2F5C9A" />
+          <Ionicons name="newspaper-outline" size={14} color="#1E4B8A" />
           <Text style={styles.regionText}>{item.region}</Text>
         </View>
 
         {/* Date */}
         <View style={[styles.row, { marginTop: 6 }]}>
-          <Ionicons name="calendar-outline" size={14} color="#2F5C9A" />
+          <Ionicons name="calendar-outline" size={14} color="#1E4B8A" />
           <Text style={styles.dateText}>{item.date}</Text>
         </View>
 
-        {/* Icons */}
-        <View style={styles.iconRow}>
-          <TouchableOpacity onPress={() => onLike(item.id)}>
-            <AntDesign
-              name={isLiked ? "heart" : "hearto"}
-              size={18}
-              color={isLiked ? "red" : "gray"}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => onSave(item)}>
-            <Ionicons
-              name={isNewsSaved ? "bookmark" : "bookmark-outline"}
-              size={18}
-              color={isNewsSaved ? "#2F5C9A" : "gray"}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-        </View>
+        {/* Tombol Like & Save */}
+        {(onLike && onSave) && (
+          <View style={styles.iconRow}>
+            <TouchableOpacity onPress={() => onLike(item.id)}>
+              <AntDesign
+                name={isLiked ? "heart" : "hearto"}
+                size={18}
+                color={isLiked ? "red" : "gray"}
+                style={styles.icon}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => onSave(item)}>
+              <Ionicons
+                name={isNewsSaved ? "bookmark" : "bookmark-outline"}
+                size={18}
+                color={isNewsSaved ? "#1E4B8A" : "gray"}
+                style={styles.icon}
+              />
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     </View>
   );
@@ -70,9 +95,9 @@ export default function NewsCard({
 
 const styles = StyleSheet.create({
   card: {
-    width: 180, // ukuran diperbesar
-    height: 310, // ukuran diperbesar
-    marginTop:8,
+    width: 180,
+    height: 310,
+    marginTop: 8,
     borderRadius: 12,
     backgroundColor: "#fff",
     overflow: "hidden",
@@ -94,6 +119,8 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 12,
     borderBottomRightRadius: 12,
     position: "relative",
+    flex: 1,
+    justifyContent: "center",
   },
   row: {
     flexDirection: "row",
@@ -102,7 +129,7 @@ const styles = StyleSheet.create({
   regionText: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#2F5C9A",
+    color: "#1E4B8A",
     marginLeft: 6,
   },
   dateText: {
@@ -118,6 +145,18 @@ const styles = StyleSheet.create({
     bottom: 10,
   },
   icon: {
-    marginLeft: 3,
+    marginLeft: 8,
+  },
+  editButton: {
+    position: "absolute",
+    top: 8,
+    backgroundColor: "#f8fafc",
+    padding: 6,
+    borderRadius: 50,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    shadowOffset: { width: 0, height: 1 },
   },
 });

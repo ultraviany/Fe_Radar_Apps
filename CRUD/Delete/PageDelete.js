@@ -3,14 +3,15 @@ import {
   View,
   Text,
   FlatList,
-  Image,
-  StyleSheet,
   TouchableOpacity,
   Alert,
   Platform,
+  StyleSheet,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
+
+import NewsCard from '../../Home/NewsCard';
 
 import cover1 from '../../assets/cover1.png';
 import cover2 from '../../assets/cover2.png';
@@ -20,55 +21,49 @@ const allData = [
     id: '1',
     image: cover1,
     date: '10 Juli 2025',
-    rawDate: new Date(2025, 6, 10), // bulan 6 = Juli (0-indexed)
+    rawDate: new Date(2025, 6, 10),
+    region: 'Tulungagung',
   },
   {
     id: '2',
     image: cover2,
     date: '14 Juli 2025',
     rawDate: new Date(2025, 6, 14),
+    region: 'Blitar',
   },
 ];
 
 export default function PageDelete({ navigation }) {
   const [selectedDate, setSelectedDate] = useState(null);
   const [showPicker, setShowPicker] = useState(false);
+  const [data, setData] = useState(allData);
 
   const handleDelete = (item) => {
-    Alert.alert('Berhasil', `Epaper tanggal ${item.date} berhasil dihapus`);
+    Alert.alert(
+      'Konfirmasi Hapus',
+      `Yakin ingin menghapus Epaper tanggal ${item.date}?`,
+      [
+        { text: 'Batal', style: 'cancel' },
+        {
+          text: 'Hapus',
+          style: 'destructive',
+          onPress: () => {
+            setData(prev => prev.filter(epaper => epaper.id !== item.id));
+            Alert.alert('Berhasil', `Epaper tanggal ${item.date} berhasil dihapus`);
+          },
+        },
+      ]
+    );
   };
 
   const handleDateChange = (event, date) => {
     setShowPicker(false);
-    if (date) {
-      setSelectedDate(date);
-    }
+    if (date) setSelectedDate(date);
   };
 
   const filteredData = selectedDate
-    ? allData.filter(
-        (item) =>
-          item.rawDate.toDateString() === selectedDate.toDateString()
-      )
-    : allData;
-
-  const renderItem = ({ item }) => (
-    <View style={styles.card}>
-      <Image source={item.image} style={styles.image} />
-      <View style={styles.cardFooter}>
-        <View style={styles.iconWrapper}>
-          <Ionicons name="calendar" size={13} color="#1E3A8A" />
-        </View>
-        <Text style={styles.dateText}>{item.date}</Text>
-        <TouchableOpacity
-          style={styles.deleteButton}
-          onPress={() => handleDelete(item)}
-        >
-          <Ionicons name="trash-outline" size={16} color="#B91C1C" />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+    ? data.filter(item => item.rawDate.toDateString() === selectedDate.toDateString())
+    : data;
 
   return (
     <View style={styles.container}>
@@ -85,10 +80,7 @@ export default function PageDelete({ navigation }) {
       </View>
 
       {/* FILTER TANGGAL */}
-      <TouchableOpacity
-        style={styles.filterButton}
-        onPress={() => setShowPicker(true)}
-      >
+      <TouchableOpacity style={styles.filterButton} onPress={() => setShowPicker(true)}>
         <Ionicons name="calendar-outline" size={18} color="#1E3A8A" />
         <Text style={styles.filterText}>
           {selectedDate
@@ -113,14 +105,21 @@ export default function PageDelete({ navigation }) {
       {/* LIST */}
       <FlatList
         data={filteredData}
-        renderItem={renderItem}
         keyExtractor={(item) => item.id}
         numColumns={2}
-        contentContainerStyle={styles.list}
-        columnWrapperStyle={{ justifyContent: 'space-between' }}
+        columnWrapperStyle={{ justifyContent: 'space-between', paddingHorizontal: 16 }}
+        contentContainerStyle={{ paddingTop: 20 }}
         ListEmptyComponent={
           <Text style={styles.emptyText}>Tidak ada epaper untuk tanggal ini.</Text>
         }
+        renderItem={({ item }) => (
+          <NewsCard
+            item={item}
+            navigation={navigation}
+            showDeleteButton={true}
+            onDelete={handleDelete}
+          />
+        )}
       />
     </View>
   );
@@ -141,28 +140,17 @@ const styles = StyleSheet.create({
     left: 20,
     zIndex: 1,
   },
-  headerTitle: {
-    fontSize: 35,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-  headerSubtitle: {
-    fontSize: 25,
-    marginTop: 8,
-  },
+  headerTitle: { fontSize: 35, fontWeight: 'bold', color: '#fff' },
+  headerSubtitle: { fontSize: 25, marginTop: 8 },
   yellowText: { color: '#efbe1eff', fontWeight: 'bold' },
   whiteText: { color: '#fff', fontWeight: 'bold' },
-  list: {
-    paddingHorizontal: 16,
-    paddingTop: 20,
-  },
   filterButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
     marginHorizontal: 16,
     marginTop: 16,
-    paddingVertical: 14, // diperbesar
+    paddingVertical: 14,
     paddingHorizontal: 16,
     borderRadius: 12,
     shadowColor: '#000',
@@ -174,59 +162,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     color: '#1E293B',
     fontWeight: '500',
-    fontSize: 15, // diperbesar
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    overflow: 'hidden',
-    marginBottom: 20,
-    width: '48%',
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 4,
-  },
-  image: {
-    width: '100%',
-    height: 270,
-    resizeMode: 'cover',
-  },
-  cardFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    backgroundColor: '#F9FAFB',
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    justifyContent: 'space-between',
-  },
-  iconWrapper: {
-    backgroundColor: '#fff',
-    padding: 5,
-    borderRadius: 50,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-    marginRight: 6,
-  },
-  dateText: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: '#1E293B',
-    flex: 1,
-    marginLeft: 6,
-  },
-  deleteButton: {
-    backgroundColor: '#fff',
-    padding: 6,
-    borderRadius: 50,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    fontSize: 15,
   },
   emptyText: {
     textAlign: 'center',

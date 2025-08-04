@@ -121,7 +121,7 @@ const MenuItem = ({ icon, label, sub, onPress }) => (
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
   header: {
-    backgroundColor: "#2F5C9A",
+    backgroundColor: "#1E4B8A",
     paddingTop: 50,
     paddingBottom: 20,
     paddingHorizontal: 16,
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   menuIcon: {
-    backgroundColor: "#2F5C9A",
+    backgroundColor: "#1E4B8A",
     padding: 10,
     borderRadius: 25,
     marginRight: 12,

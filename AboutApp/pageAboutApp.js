@@ -21,7 +21,7 @@ export default function AboutPage() {
         <Text style={styles.epaperText}>EPAPER</Text>
         <Text style={styles.brandText}>
           <Text style={{ color: "#F9A826", fontWeight: "bold" }}>RADAR</Text>
-          <Text style={{ color: "#2f5c9A", fontWeight: "bold" }}>TULUNGAGUNG</Text>
+          <Text style={{ color: "#1E4B8A", fontWeight: "bold" }}>TULUNGAGUNG</Text>
         </Text>
 
         <Text style={styles.description}>
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   epaperText: {
     fontSize: 25,
     fontWeight: "bold",
-    color: "#2F5C9A",
+    color: "#1E4B8A",
   },
   brandText: {
     fontSize: 20,
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   featureBox: {
     width: "100%",
     borderWidth: 1,
-    borderColor: "#2F5C9A",
+    borderColor: "#1E4B8A",
     padding: 12,
     borderRadius: 10,
     marginBottom: 20,
