@@ -16,10 +16,10 @@ const Keamananpage = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       {/* 🔵 Header */}
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <Ionicons name="arrow-back" size={24} color="#fff" />
         <Text style={styles.headerTitle}>Keamanan</Text>
-      </View>
+      </View> */}
 
       {/* 🔒 Gambar Gembok */}
       <View style={styles.lockContainer}>

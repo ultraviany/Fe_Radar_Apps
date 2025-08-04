@@ -41,7 +41,7 @@ export default function NewsCard({
             style={[styles.editButton, { right: 8 }]}
             onPress={() => navigation.navigate("PageUpdate", { item })}
           >
-            <Ionicons name="create-outline" size={18} color="#2F5C9A" />
+            <Ionicons name="create-outline" size={18} color="#1E4B8A" />
           </TouchableOpacity>
         )}
 
@@ -51,19 +51,19 @@ export default function NewsCard({
             style={[styles.editButton, { right: 8 }]}
             onPress={() => onDelete(item)}
           >
-            <Ionicons name="trash-outline" size={18} color="#2F5C9A" />
+            <Ionicons name="trash-outline" size={18} color="#1E4B8A" />
           </TouchableOpacity>
         )}
 
         {/* Region */}
         <View style={styles.row}>
-          <Ionicons name="newspaper-outline" size={14} color="#2F5C9A" />
+          <Ionicons name="newspaper-outline" size={14} color="#1E4B8A" />
           <Text style={styles.regionText}>{item.region}</Text>
         </View>
 
         {/* Date */}
         <View style={[styles.row, { marginTop: 6 }]}>
-          <Ionicons name="calendar-outline" size={14} color="#2F5C9A" />
+          <Ionicons name="calendar-outline" size={14} color="#1E4B8A" />
           <Text style={styles.dateText}>{item.date}</Text>
         </View>
 
@@ -82,7 +82,7 @@ export default function NewsCard({
               <Ionicons
                 name={isNewsSaved ? "bookmark" : "bookmark-outline"}
                 size={18}
-                color={isNewsSaved ? "#2F5C9A" : "gray"}
+                color={isNewsSaved ? "#1E4B8A" : "gray"}
                 style={styles.icon}
               />
             </TouchableOpacity>
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
   regionText: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#2F5C9A",
+    color: "#1E4B8A",
     marginLeft: 6,
   },
   dateText: {
