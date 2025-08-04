@@ -1,32 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
-  Image,
   TouchableOpacity,
   StyleSheet,
   Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { WebView } from 'react-native-webview';
 
-const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 export default function PageEpaper({ navigation }) {
-  const [currentPage, setCurrentPage] = useState(2);
-  const totalPages = 3;
-
-  const goToPrev = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-
-  const goToNext = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
+  const pubHtml5Link = "https://online.pubhtml5.com/uwppd/hmyj/";
 
   return (
     <View style={styles.container}>
-      {/* HEADER - Menyerupai PageComment */}
+      {/* HEADER */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
@@ -40,23 +30,17 @@ export default function PageEpaper({ navigation }) {
       </View>
 
       {/* TANGGAL */}
-      <Text style={styles.date}>Radar Tulungagung, 14 Juli 2025</Text>
+      <Text style={styles.date}>Radar Trenggalek, 21   Juli 2025</Text>
 
-      {/* KORAN */}
-      <View style={styles.epaperContainer}>
-        <TouchableOpacity onPress={goToPrev}>
-          <Ionicons name="chevron-back-circle" size={30} color="#fff" />
-        </TouchableOpacity>
-
-        <Image source={require('../assets/koran.png')} style={styles.image} />
-
-        <TouchableOpacity onPress={goToNext}>
-          <Ionicons name="chevron-forward-circle" size={30} color="#fff" />
-        </TouchableOpacity>
+      {/* EPAPER VIEW (dengan tinggi terbatas, tidak fullscreen, tanpa panah, tanpa background biru) */}
+      <View style={styles.webviewContainer}>
+        <WebView
+          source={{ uri: pubHtml5Link }}
+          style={styles.webview}
+          javaScriptEnabled={true}
+          domStorageEnabled={true}
+        />
       </View>
-
-      {/* PAGINATION */}
-      <Text style={styles.pagination}>{currentPage} / {totalPages}</Text>
 
       {/* KOMENTAR */}
       <TouchableOpacity style={styles.commentArea} onPress={() => navigation.navigate('PageComment')}>
@@ -73,7 +57,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    alignItems: 'center',
   },
   header: {
     backgroundColor: '#1E4B8A',
@@ -108,27 +91,19 @@ const styles = StyleSheet.create({
   },
   date: {
     fontWeight: 'bold',
-    marginTop: 20,
+    marginTop: 10,
     fontSize: 15,
+    textAlign: 'center',
   },
-  epaperContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#1E4B8A',
-    padding: 10,
-    borderRadius: 16,
+  webviewContainer: {
+    height: screenHeight * 0.45,
     marginTop: 16,
+    marginHorizontal: 50,
+    borderRadius: 12,
+    overflow: 'hidden',
   },
-  image: {
-    width: screenWidth * 0.5,
-    height: screenHeight * 0.4,
-    resizeMode: 'contain',
-    marginHorizontal: 10,
-  },
-  pagination: {
-    marginTop: 16,
-    fontWeight: 'bold',
-    fontSize: 16,
+  webview: {
+    flex: 1,
   },
   commentArea: {
     position: 'absolute',
@@ -136,7 +111,7 @@ const styles = StyleSheet.create({
     width: '90%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    alignSelf: 'center',
   },
   commentIcon: {
     paddingRight: 16,
