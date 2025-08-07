@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,24 +9,80 @@ import {
   Platform,
   Keyboard,
   TouchableWithoutFeedback,
+  Alert,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function PageKonfrimOTP({ navigation }) {
   const [otp, setOtp] = useState("");
+  // const [userEmail, setUserEmail] = useState("");
   const inputRef = useRef();
+
+  // useEffect(() => {
+  //   const getEmail = async () => {
+  //     try {
+  //       const email = await AsyncStorage.getItem("user_email");
+  //       if (email) {
+  //         setUserEmail(email);
+  //         console.log("email pengguna:", email);
+  //       } else {
+  //         Alert.alert("Error", "Email tidak ditemukan");
+  //       }
+  //     } catch (error) {
+  //       console.error("Gagal mengambil email:", error);
+  //     }
+  //   };
+  //   getEmail();
+  // }, []);
 
   const handleOtpChange = (value) => {
     const sanitized = value.replace(/[^0-9]/g, "");
     setOtp(sanitized.slice(0, 6));
   };
 
-  const handleConfirmOTP = () => {
+  const handleConfirmOTP = async () => {
     if (otp.length < 6) {
-      alert("Kode OTP harus 6 digit");
+      Alert.alert("Error", "Kode OTP harus 6 digit");
       return;
     }
-    alert(`OTP dikonfirmasi: ${otp}`);
-    navigation.navigate("PagePw-OTP");
+
+    try {
+      console.log("Kirim konfirmasi otp:", { otp });
+
+      const response = await fetch(
+        "http://192.168.1.93:3000/RadarApps/api/v1/otp/confirm",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ otp }), // hanya OTP dikirim
+        }
+      );
+
+      const resultText = await response.text();
+      try {
+        const result = JSON.parse(resultText);
+        console.log("Respon be:", result);
+
+        if (response.ok) {
+          const resetToken = result.data.token;
+          const resetId = result.data.id;
+          await AsyncStorage.setItem("reset_token", resetToken);
+          await AsyncStorage.setItem ("reset_id", resetId)
+          Alert.alert("Berhasil", "OTP berhasil dikonfirmasi.");
+          navigation.navigate("PagePw-OTP");
+        } else {
+          Alert.alert("Gagal", result.message || "Gagal Konfirmasi OTP.");
+        }
+      } catch (jsonError) {
+        console.error("Gagal parsing JSON:", resultText);
+        Alert.alert("Error", "Response bukan JSON.");
+      }
+    } catch (error) {
+      console.error("Error konfirmasi OTP:", error);
+      Alert.alert("Error", "Terjadi kesalahan saat konfirmasi OTP.");
+    }
   };
 
   return (
@@ -38,8 +94,7 @@ export default function PageKonfrimOTP({ navigation }) {
         <View style={styles.container}>
           <Text style={styles.title}>Masukkan kode OTP</Text>
           <Text style={styles.subtitle}>
-            Kami telah mengirimkan kode verifikasi ke email Anda di{" "}
-            <Text style={styles.email}>iskuhuydev@email.com</Text>.
+            Kami telah mengirimkan kode verifikasi ke email Anda.
           </Text>
           <Text style={styles.instruction}>Silahkan cek email Anda.</Text>
 
@@ -54,7 +109,6 @@ export default function PageKonfrimOTP({ navigation }) {
                 ))}
             </View>
 
-            {/* Visible Input */}
             <TextInput
               ref={inputRef}
               style={styles.visibleInput}
@@ -101,10 +155,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 4,
   },
-  email: {
-    color: "#003087",
-    fontWeight: "bold",
-  },
   instruction: {
     fontSize: 16,
     marginBottom: 24,
@@ -146,7 +196,7 @@ const styles = StyleSheet.create({
     left: 0,
     width: 330,
     height: 60,
-    opacity: 0.02, // Nyaris transparan tapi masih bisa ditekan
+    opacity: 0.02,
     zIndex: 10,
   },
   resendText: {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -7,24 +7,112 @@ import {
   Image,
   Dimensions,
   SafeAreaView,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-
-const { width } = Dimensions.get('window');
+  Alert
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Keamananpage = ({ navigation }) => {
+  const [user, setUser] = useState(null);
+
+  // info username
+  useFocusEffect(
+    useCallback(() => {
+      const fetchUser = async () => {
+        try {
+          const token = await AsyncStorage.getItem("token");
+
+          if (!token) {
+            console.warn("Token tidak ditemukan.");
+            return;
+          }
+
+          const response = await fetch(
+            "http://192.168.1.93:3000/RadarApps/api/v1/profile",
+            {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          const result = await response.json();
+
+          if (response.ok) {
+            setUser(result.data);
+            console.log("user.image:", result.data.image);
+          } else {
+            console.error("Gagal mengambil profil:", result.message);
+          }
+        } catch (error) {
+          console.error("Error saat mengambil profile:", error);
+        }
+      };
+
+      fetchUser();
+    }, [])
+  );
+
+  // untuk request OTP
+  const handleSendOtp = async () => {
+  try {
+    console.log("🔍 Mulai kirim OTP...");
+
+    if (!user?.username || !user?.email) {
+      console.log("❌ Email atau username tidak ditemukan:", user);
+      Alert.alert("Error", "Data email atau username tidak ditemukan.");
+      return;
+    }
+
+    console.log("📤 Mengirim request ke backend dengan data:", {
+      username: user.username,
+      email: user.email,
+    });
+
+    const response = await fetch(
+      "http://192.168.1.93:3000/RadarApps/api/v1/otp",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: user.username,
+          email: user.email,
+        }),
+      }
+    );
+
+    const result = await response.json();
+
+    console.log("📥 Response dari server:", result);
+
+    if (response.ok) {
+      console.log("✅ OTP berhasil dikirim.");
+      Alert.alert("Berhasil", "Kode OTP telah dikirim ke email Anda.");
+      navigation.navigate("PageKonfrimOTP");
+    } else {
+      console.log("❗ Gagal kirim OTP:", result.message);
+      Alert.alert(
+        "Gagal",
+        result.message || "Terjadi kesalahan saat mengirim OTP."
+      );
+    }
+  } catch (error) {
+    console.error("🔥 Error saat request OTP:", error);
+    Alert.alert("Error", "Tidak dapat mengirim OTP. Periksa koneksi Anda.");
+  }
+};
+
+
   return (
     <SafeAreaView style={styles.container}>
-      {/* 🔵 Header */}
-      {/* <View style={styles.header}>
-        <Ionicons name="arrow-back" size={24} color="#fff" />
-        <Text style={styles.headerTitle}>Keamanan</Text>
-      </View> */}
-
       {/* 🔒 Gambar Gembok */}
       <View style={styles.lockContainer}>
         <Image
-          source={require('../assets/forgotpassword.png')}
+          source={require("../assets/forgotpassword.png")}
           style={styles.lockImage}
           resizeMode="contain"
         />
@@ -32,16 +120,25 @@ const Keamananpage = ({ navigation }) => {
 
       {/* 👤 Info Akun */}
       <View style={styles.accountBox}>
-        <Ionicons name="person-circle-outline" size={80} color="#777" />
+        {user?.image ? (
+          <Image
+            source={{ uri: `http://192.168.1.93:3000/user/${user.image}` }}
+            style={styles.avatar}
+          />
+        ) : (
+          <Ionicons name="person-circle-outline" size={68} color="#555" />
+        )}
         <View style={{ marginLeft: 12 }}>
-          <Text style={styles.nameText}>Rizkuhuy</Text>
+          <Text style={styles.profileName}>
+            {user ? user.username : "Memuat..."}
+          </Text>
           <View style={styles.row}>
-            <Ionicons name="mail" size={16} color="#555" />
-            <Text style={styles.detailText}> iskuhuhuydev@email.com</Text>
+            <Ionicons name="mail" size={20} color="#555" />
+            <Text style={styles.profileEmail}>{user ? user.email : "-"}</Text>
           </View>
           <View style={styles.row}>
-            <Ionicons name="lock-closed" size={16} color="#555" />
-            <Text style={styles.detailText}> ••••••</Text>
+            <Ionicons name="lock-closed" size={20} color="#555" />
+            <Text style={styles.detailText}> ••••••••</Text>
           </View>
         </View>
       </View>
@@ -49,14 +146,12 @@ const Keamananpage = ({ navigation }) => {
       {/* ❓ Teks Lupa Password */}
       <Text style={styles.forgotTitle}>Lupa Kata Sandi?</Text>
       <Text style={styles.forgotDesc}>
-        Kode OTP untuk mengatur ulang kata sandi akan{'\n'}dikirimkan pada email anda.
+        Kode OTP untuk mengatur ulang kata sandi {"\n"} akan dikirimkan pada
+        email anda.
       </Text>
 
       {/* 🔁 Tombol Navigasi ke GantiPassword */}
-      <TouchableOpacity
-        style={styles.resetButton}
-        onPress={() => navigation.navigate("PageKonfrimOTP")}
-      >
+      <TouchableOpacity style={styles.resetButton} onPress={handleSendOtp}>
         <Text style={styles.resetButtonText}>Kirim Kode OTP</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -66,24 +161,24 @@ const Keamananpage = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   header: {
-    backgroundColor: '#1E4B8A',
+    backgroundColor: "#1E4B8A",
     paddingTop: 50,
     paddingBottom: 20,
     paddingHorizontal: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   headerTitle: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginLeft: 12,
   },
   lockContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 40,
   },
   lockImage: {
@@ -91,56 +186,68 @@ const styles = StyleSheet.create({
     height: 120,
   },
   accountBox: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginHorizontal: 20,
     marginTop: 24,
-    backgroundColor: '#fff',
-    borderColor: '#1E4B8A',
-    borderWidth: 1,
-    borderRadius: 12,
-    padding: 16,
+    backgroundColor: "#fff",
+    borderColor: "#1E4B8A",
+    borderWidth: 2,
+    borderRadius: 14,
+    padding: 18,
     elevation: 4,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 6,
   },
-  nameText: {
-    fontWeight: 'bold',
-    fontSize: 24,
+  profileName: {
+    fontWeight: "bold",
+    fontSize: 16,
   },
   row: {
-    flexDirection: 'row',
-    marginTop: 4,
-    alignItems: 'center',
+    flexDirection: "row",
+    marginTop: 8,
+    alignItems: "center",
+  },
+  profileEmail: {
+    fontSize: 16,
+    color: "#444",
+    marginLeft: 6,
   },
   detailText: {
-    fontSize: 13,
-    color: '#444',
+    fontSize: 16,
+    color: "#444",
+    marginLeft: 6,
   },
   forgotTitle: {
-    textAlign: 'center',
-    fontWeight: 'bold',
+    textAlign: "center",
+    fontWeight: "bold",
     fontSize: 20,
     marginTop: 32,
   },
   forgotDesc: {
-    textAlign: 'center',
-    color: '#555',
-    fontSize: 12,
-    marginTop: 6,
+    textAlign: "center",
+    color: "#555",
+    fontSize: 14,
+    marginTop: 8,
   },
   resetButton: {
-    backgroundColor: '#1E4B8A',
+    backgroundColor: "#1E4B8A",
     paddingVertical: 14,
     marginHorizontal: 40,
-    borderRadius: 8,
+    borderRadius: 10,
     marginTop: 24,
-    alignItems: 'center',
+    alignItems: "center",
   },
   resetButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: 16,
+  },
+  avatar: {
+    width: 70,
+    height: 70,
+    borderRadius: 30,
+    backgroundColor: "#eee",
   },
 });
 
