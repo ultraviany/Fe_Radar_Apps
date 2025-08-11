@@ -15,25 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function PageKonfrimOTP({ navigation }) {
   const [otp, setOtp] = useState("");
-  // const [userEmail, setUserEmail] = useState("");
   const inputRef = useRef();
-
-  // useEffect(() => {
-  //   const getEmail = async () => {
-  //     try {
-  //       const email = await AsyncStorage.getItem("user_email");
-  //       if (email) {
-  //         setUserEmail(email);
-  //         console.log("email pengguna:", email);
-  //       } else {
-  //         Alert.alert("Error", "Email tidak ditemukan");
-  //       }
-  //     } catch (error) {
-  //       console.error("Gagal mengambil email:", error);
-  //     }
-  //   };
-  //   getEmail();
-  // }, []);
 
   const handleOtpChange = (value) => {
     const sanitized = value.replace(/[^0-9]/g, "");
@@ -94,7 +76,7 @@ export default function PageKonfrimOTP({ navigation }) {
         <View style={styles.container}>
           <Text style={styles.title}>Masukkan kode OTP</Text>
           <Text style={styles.subtitle}>
-            Kami telah mengirimkan kode verifikasi ke email Anda.
+            Kami telah mengirimkan kode verifikasi.
           </Text>
           <Text style={styles.instruction}>Silahkan cek email Anda.</Text>
 

@@ -149,13 +149,13 @@ const KelolaAkun = () => {
             {profileImage ? (
               <Image
                 source={{ uri: profileImage }}
-                style={{ width: 100, height: 100, borderRadius: 60 }}
+                style={{ width: 130, height: 130, borderRadius: 70 }}
               />
             ) : (
               <Icon name="person" size={60} color="#aaa" />
             )}
             <View style={styles.cameraIcon}>
-              <Icon name="camera" size={18} color="#fff" />
+              <Icon name="camera" size={20} color="#fff" />
             </View>
           </TouchableOpacity>
           <Text style={styles.uploadText}>
@@ -196,9 +196,9 @@ const styles = StyleSheet.create({
   avatarContainer: { alignItems: "center", marginBottom: 24 },
   avatarWrapper: {
     backgroundColor: "#eee",
-    borderRadius: 60,
-    width: 100,
-    height: 100,
+    borderRadius: 70,
+    width: 130,
+    height: 130,
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
     backgroundColor: "#1E4B8A",
-    borderRadius: 12,
+    borderRadius: 13,
     padding: 4,
   },
   uploadText: {

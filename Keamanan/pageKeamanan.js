@@ -133,11 +133,11 @@ const Keamananpage = ({ navigation }) => {
             {user ? user.username : "Memuat..."}
           </Text>
           <View style={styles.row}>
-            <Ionicons name="mail" size={20} color="#555" />
+            <Ionicons name="mail-outline" size={20} color="#1E4B8A" />
             <Text style={styles.profileEmail}>{user ? user.email : "-"}</Text>
           </View>
           <View style={styles.row}>
-            <Ionicons name="lock-closed" size={20} color="#555" />
+            <Ionicons name="lock-closed-outline" size={20} color="#1E4B8A" />
             <Text style={styles.detailText}> ••••••••</Text>
           </View>
         </View>

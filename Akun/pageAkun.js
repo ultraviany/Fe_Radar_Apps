@@ -231,8 +231,8 @@ const styles = StyleSheet.create({
   content: { padding: 20 },
   profileBox: {
     backgroundColor: "#fff",
-    borderColor: "#DDD",
-    borderWidth: 1,
+    borderColor: "#1E4B8A",
+    borderWidth: 2,
     borderRadius: 10,
     padding: 16,
     flexDirection: "row",
@@ -244,9 +244,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 60,
+    height: 60,
+    borderRadius: 28,
     backgroundColor: "#eee",
   },
   profileName: { fontSize: 16, fontWeight: "bold" },
