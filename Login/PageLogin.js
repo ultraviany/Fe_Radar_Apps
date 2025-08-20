@@ -54,8 +54,10 @@ export default function PageLogin({ navigation }) {
 
             // Navigasi berdasarkan peran
             if (role === "ADMIN") {
+                // await AsyncStorage.setItem("adminToken", token);
                 navigation.replace("PageCRUD");
             } else {
+                //  await AsyncStorage.setItem("userToken", token); // agar token nyamasuk ke user token
                 navigation.replace("MainTabs", { screen: "Home" }); // Tab Home
             }
 
