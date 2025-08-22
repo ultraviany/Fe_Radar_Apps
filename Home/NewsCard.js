@@ -10,7 +10,8 @@ import {
 import { Ionicons, AntDesign } from "@expo/vector-icons";
 
 const screenWidth = Dimensions.get("window").width;
-const cardWidth = (screenWidth - 16 * 3) / 2;
+// Biar card lebih ke samping → kurangi margin
+const cardWidth = (screenWidth - 10 * 3) / 2;
 
 export default function NewsCard({
   item,
@@ -27,7 +28,7 @@ export default function NewsCard({
     <View style={[styles.card, { width: cardWidth }]}>
       <TouchableOpacity onPress={() => navigation.navigate("PageEpaper")}>
         <Image
-          source={item.image}
+          source={{ uri: item.image }}
           style={styles.coverImage}
           resizeMode="cover"
         />
@@ -38,7 +39,7 @@ export default function NewsCard({
         {/* Tombol Edit */}
         {showEditButton && (
           <TouchableOpacity
-            style={[styles.editButton, { right: 8 }]}
+            style={[styles.editButton, { right: 36 }]}
             onPress={() => navigation.navigate("PageUpdate", { item })}
           >
             <Ionicons name="create-outline" size={18} color="#1E4B8A" />
@@ -58,7 +59,7 @@ export default function NewsCard({
         {/* Region */}
         <View style={styles.row}>
           <Ionicons name="newspaper-outline" size={14} color="#1E4B8A" />
-          <Text style={styles.regionText}>{item.region}</Text>
+          <Text style={styles.regionText}>{item.regionLabel}</Text>
         </View>
 
         {/* Date */}
@@ -68,13 +69,13 @@ export default function NewsCard({
         </View>
 
         {/* Tombol Like & Save */}
-        {(onLike && onSave) && (
+        {onLike && onSave && (
           <View style={styles.iconRow}>
             <TouchableOpacity onPress={() => onLike(item.id)}>
               <AntDesign
                 name={isLiked ? "heart" : "hearto"}
                 size={18}
-                color={isLiked ? "red" : "gray"}
+                color={isLiked ? "red" : "#000"}
                 style={styles.icon}
               />
             </TouchableOpacity>
@@ -82,7 +83,7 @@ export default function NewsCard({
               <Ionicons
                 name={isNewsSaved ? "bookmark" : "bookmark-outline"}
                 size={18}
-                color={isNewsSaved ? "#1E4B8A" : "gray"}
+                color={isNewsSaved ? "#1E4B8A" : "#000"}
                 style={styles.icon}
               />
             </TouchableOpacity>
@@ -95,8 +96,7 @@ export default function NewsCard({
 
 const styles = StyleSheet.create({
   card: {
-    width: 180,
-    height: 310,
+    height: 320,
     marginTop: 8,
     borderRadius: 12,
     backgroundColor: "#fff",
@@ -104,48 +104,49 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 8,
+    shadowRadius: 5,
     elevation: 4,
   },
   coverImage: {
     width: "100%",
-    height: 240,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
+    height: 235,
+    backgroundColor: "#ddd",
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
   },
   footer: {
     backgroundColor: "#fff",
-    padding: 12,
+    paddingHorizontal: 12,
+    paddingTop: 8,
+    paddingBottom: 30,
     borderBottomLeftRadius: 12,
     borderBottomRightRadius: 12,
     position: "relative",
-    flex: 1,
-    justifyContent: "center",
   },
   row: {
     flexDirection: "row",
     alignItems: "center",
   },
   regionText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: "600",
     color: "#1E4B8A",
     marginLeft: 6,
   },
   dateText: {
     fontSize: 12,
-    color: "gray",
+    color: "#1E4B8A",
     marginLeft: 6,
     fontWeight: "500",
   },
   iconRow: {
     flexDirection: "row",
     position: "absolute",
-    right: 10,
-    bottom: 10,
+    right: 15,
+    bottom: 4,
   },
   icon: {
-    marginLeft: 8,
+    marginLeft: 6,
   },
   editButton: {
     position: "absolute",

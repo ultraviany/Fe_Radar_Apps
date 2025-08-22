@@ -194,7 +194,7 @@ export default function PageUpdate({ navigation, route }) {
         return;
       }
 
-      const res = await fetch(`${BASE_URL}/RadarApps/api/v1/news/update`, {
+      const res = await fetch(`${BASE_URL}/RadarApps/api/v1/news/update/${id}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`, // penting!

@@ -27,7 +27,7 @@ export default function PageRead() {
   const [hasMore, setHasMore] = useState(true);
 
   const BASE_URL = "http://192.168.1.93:3000";
-  const quantity = 1;
+  const quantity = 10;
 
   useFocusEffect(
     useCallback(() => {

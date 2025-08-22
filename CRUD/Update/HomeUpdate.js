@@ -16,7 +16,7 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 
 const screenWidth = Dimensions.get("window").width;
 const BASE_URL = "http://192.168.1.93:3000"; // ganti sesuai server
-const quantity = 1;
+const quantity = 10;
 
 export default function HomeUpdate() {
   const navigation = useNavigation();
