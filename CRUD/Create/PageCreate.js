@@ -226,7 +226,7 @@ export default function PageCreate({ navigation }) {
                 {index + 1}. {file.name}
               </Text>
               <TouchableOpacity onPress={() => removePdf(index)}>
-                <Ionicons name="close-circle" size={22} color="red" />
+                <Ionicons name="trash" size={20} color="red" />
               </TouchableOpacity>
             </View>
           ))}
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
-  formWrapper: { padding: 20 },
+  formWrapper: { paddingHorizontal: 16, paddingVertical: 38 },
   formTitle: { fontSize: 16, fontWeight: "bold", marginBottom: 4 },
   formDesc: { color: "#666", marginBottom: 20 },
   label: { marginTop: 12, marginBottom: 6, fontWeight: "600" },
@@ -387,11 +387,14 @@ const styles = StyleSheet.create({
 
   pdfItem: {
     flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#f1f1f1",
-    padding: 8,
-    borderRadius: 6,
-    marginTop: 6,
+    marginBottom: 8,
+    padding: 10,
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
   },
 
   // Modal Styles

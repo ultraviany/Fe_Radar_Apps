@@ -9,6 +9,7 @@ import {
   FlatList,
   Alert,
   ActivityIndicator,
+  ScrollView,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
@@ -22,10 +23,11 @@ export default function PageUpdate({ navigation, route }) {
   const { id } = route.params || {}; // id news dari homeupdate
 
   const [cover, setCover] = useState(null);
-  const [pdf, setPdf] = useState(null);
+  const [pdfs, setPdfs] = useState([]);
   const [selectedWilayah, setSelectedWilayah] = useState(null);
   const [wilayahModalVisible, setWilayahModalVisible] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [removedPdfs, setRemovedPdfs] = useState([]);
 
   const wilayahList = ["Radar Tulungagung", "Radar Trenggalek", "Radar Blitar"];
 
@@ -37,11 +39,9 @@ export default function PageUpdate({ navigation, route }) {
       const json = await res.json();
       const data = json?.data || json;
 
-      // Normalisasi path image ( opsional )
+      // Normalisasi path image
       const fixedImage = data?.image
-        ? data.image
-            .replace(/\\/g, "/")
-            .replace(/^public\//, "")
+        ? data.image.replace(/\\/g, "/").replace(/^public\//, "")
         : null;
 
       setCover(
@@ -55,19 +55,20 @@ export default function PageUpdate({ navigation, route }) {
           : null
       );
 
-      // pdf
-
-      setPdf(
+      // pdfs
+      setPdfs(
         data?.pdfUrl
-          ? {
-              uri: data.pdfUrl.startsWith("http")
-                ? data.pdfUrl
-                : `${BASE_URL}/${data.pdfUrl.replace(/^public\//, "")}`,
-              name: data.pdfUrl.split("/").pop(),
-              type: "application/pdf",
-              existing: true,
-            }
-          : null
+          ? (Array.isArray(data.pdfUrl) ? data.pdfUrl : [data.pdfUrl]).map(
+              (url) => ({
+                uri: url.startsWith("http")
+                  ? url
+                  : `${BASE_URL}/${url.replace(/^public\//, "")}`,
+                name: url.split("/").pop(),
+                type: "application/pdf",
+                existing: true,
+              })
+            )
+          : []
       );
 
       if (data?.region) {
@@ -78,7 +79,6 @@ export default function PageUpdate({ navigation, route }) {
         };
         setSelectedWilayah(map[data.region] || "Radar Tulungagung");
       } else {
-        // fallback
         setSelectedWilayah("Radar Tulungagung");
       }
     } catch (error) {
@@ -100,6 +100,7 @@ export default function PageUpdate({ navigation, route }) {
     }, [fetchDetail])
   );
 
+  // pilih cover
   const pickCoverFromGallery = async () => {
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -124,6 +125,7 @@ export default function PageUpdate({ navigation, route }) {
     }
   };
 
+  // pilih pdf
   const handlePdfUpload = async () => {
     const result = await DocumentPicker.getDocumentAsync({
       type: "application/pdf",
@@ -131,17 +133,30 @@ export default function PageUpdate({ navigation, route }) {
 
     if (!result.canceled) {
       const asset = result.assets[0];
-      setPdf({
-        uri: asset.uri,
-        name: asset.name || "file.pdf",
-        type: asset.mimeType || "application/pdf",
-        existing: false,
-      });
+      setPdfs((prev) => [
+        ...prev,
+        {
+          uri: asset.uri,
+          name: asset.name || "file.pdf",
+          type: asset.mimeType || "application/pdf",
+          existing: false,
+        },
+      ]);
     }
   };
 
+  // hapus pdf
+  const removePdf = (index) => {
+    const file = pdfs[index];
+    if (file.existing) {
+      setRemovedPdfs((prev) => [...prev, file.name]); // simpan nama file lama
+    }
+    setPdfs((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // simpan perubahan
   const handleSave = async () => {
-    if (!cover || !pdf || !selectedWilayah) {
+    if (!cover || !pdfs || !selectedWilayah) {
       Alert.alert(
         "Lengkapi Data",
         "Silakan unggah cover, file PDF, dan pilih wilayah terlebih dahulu."
@@ -152,7 +167,7 @@ export default function PageUpdate({ navigation, route }) {
     try {
       console.log("📤 Mengirim update ke BE...");
       console.log("Cover:", cover);
-      console.log("PDF:", pdf);
+      console.log("PDF:", pdfs);
       console.log("Wilayah:", selectedWilayah);
 
       const regionMap = {
@@ -175,17 +190,22 @@ export default function PageUpdate({ navigation, route }) {
         });
       }
 
-      if (!pdf.existing) {
-        formData.append("pdfUrl", {
-          uri: pdf.uri.startsWith("file://") ? pdf.uri : "file://" + pdf.uri,
-          name: pdf.name || "file.pdf",
-          type: pdf.type || "application/pdf",
-        });
-      }
+      // kirim semua pdf baru
+      pdfs.forEach((file) => {
+        if (!file.existing) {
+          formData.append("pdfUrl", {
+            uri: file.uri.startsWith("file://")
+              ? file.uri
+              : "file://" + file.uri,
+            name: file.name || "file.pdf",
+            type: file.type || "application/pdf",
+          });
+        }
+      });
 
-      // 🔎 Debug log di sini
-      for (let pair of formData._parts) {
-        console.log(pair[0], pair[1]);
+      // ⬅️ TAMBAHKAN DI SINI
+      if (removedPdfs.length > 0) {
+        formData.append("removePdf", JSON.stringify(removedPdfs));
       }
 
       const token = await AsyncStorage.getItem("token");
@@ -194,22 +214,23 @@ export default function PageUpdate({ navigation, route }) {
         return;
       }
 
-      const res = await fetch(`${BASE_URL}/RadarApps/api/v1/news/update/${id}`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`, // penting!
-        },
-        body: formData,
-      });
-
-      console.log("Response:", res);
+      const res = await fetch(
+        `${BASE_URL}/RadarApps/api/v1/news/update/${id}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      );
 
       const result = await res.json();
       console.log("Response BE:", result);
 
       if (res.ok) {
         Alert.alert("Sukses", "Berita berhasil diperbarui!");
-        navigation.navigate("HomeUpdate", { refresh: true }); 
+        navigation.navigate("HomeUpdate", { refresh: true });
       } else {
         Alert.alert("Error", result.message || "Gagal update berita.");
       }
@@ -244,7 +265,9 @@ export default function PageUpdate({ navigation, route }) {
       </View>
 
       {/* Content */}
-      <View style={styles.content}>
+      <ScrollView
+        contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 35 }}
+      >
         <Text style={styles.title}>Edit Berita</Text>
         <Text style={styles.desc}>
           Pastikan form yang diisi sesuai dengan judul yang tertera.
@@ -265,11 +288,32 @@ export default function PageUpdate({ navigation, route }) {
 
         {/* PDF */}
         <Text style={styles.label}>Edit PDF E-paper</Text>
+        {pdfs.map((file, index) => (
+          <View
+            key={index}
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: 8,
+              padding: 10,
+              backgroundColor: "#fff",
+              borderRadius: 8,
+              borderWidth: 1,
+              borderColor: "#e5e7eb",
+            }}
+          >
+            <Text numberOfLines={1} style={{ flex: 1 }}>
+              {file.name}
+            </Text>
+            <TouchableOpacity onPress={() => removePdf(index)}>
+              <Ionicons name="trash" size={20} color="red" />
+            </TouchableOpacity>
+          </View>
+        ))}
         <TouchableOpacity style={styles.uploadBox} onPress={handlePdfUpload}>
           <Ionicons name="document-text" size={24} color="#aaa" />
-          <Text style={styles.uploadText}>
-            {pdf ? pdf.name : "Upload PDF e-paper"}
-          </Text>
+          <Text style={styles.uploadText}>Tambah PDF e-paper</Text>
         </TouchableOpacity>
         <Text style={styles.note}>
           *pastikan format file yang Anda kirim .pdf
@@ -322,7 +366,7 @@ export default function PageUpdate({ navigation, route }) {
         <TouchableOpacity style={styles.button} onPress={handleSave}>
           <Text style={styles.buttonText}>Simpan Perubahan</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </View>
   );
 }
@@ -361,6 +405,7 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 20,
     paddingTop: 30,
+    paddingVertical: 20,
   },
   title: {
     fontSize: 20,
