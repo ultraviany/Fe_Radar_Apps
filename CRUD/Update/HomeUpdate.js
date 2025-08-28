@@ -116,7 +116,7 @@ export default function HomeUpdate() {
       <View style={styles.card}>
         <TouchableOpacity
           onPress={() =>
-            navigation.navigate("PageEpaper", { epaper: { ...item, rawDate: item.rawDate.toISOString() } })
+            navigation.navigate("PageEpaper", { newsId: item.id })
           }
         >
           {isPdf ? (

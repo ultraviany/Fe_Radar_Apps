@@ -26,7 +26,7 @@ export default function NewsCard({
 }) {
   return (
     <View style={[styles.card, { width: cardWidth }]}>
-      <TouchableOpacity onPress={() => navigation.navigate("PageEpaper")}>
+      <TouchableOpacity onPress={() => navigation.navigate("PageEpaper", { newsId: item.id })}>
         <Image
           source={{ uri: item.image }}
           style={styles.coverImage}

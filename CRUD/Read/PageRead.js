@@ -133,7 +133,7 @@ export default function PageRead() {
     return (
       <TouchableOpacity
         style={styles.card}
-        onPress={() => navigation.navigate("PageEpaper", { epaper: item })}
+        onPress={() => navigation.navigate("PageEpaper", { newsId: item.id })}
       >
         {isPdf ? (
           <View

@@ -20,7 +20,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const BASE_URL = "http://192.168.1.93:3000";
 
 export default function PageUpdate({ navigation, route }) {
-  const { id } = route.params || {}; // id news dari homeupdate
+  const { id } = route.params || {};
 
   const [cover, setCover] = useState(null);
   const [pdfs, setPdfs] = useState([]);
@@ -39,11 +39,10 @@ export default function PageUpdate({ navigation, route }) {
       const json = await res.json();
       const data = json?.data || json;
 
-      // Normalisasi path image
+      // cover
       const fixedImage = data?.image
         ? data.image.replace(/\\/g, "/").replace(/^public\//, "")
         : null;
-
       setCover(
         fixedImage
           ? {
@@ -61,8 +60,8 @@ export default function PageUpdate({ navigation, route }) {
           ? (Array.isArray(data.pdfUrl) ? data.pdfUrl : [data.pdfUrl]).map(
               (url) => ({
                 uri: url.startsWith("http")
-                  ? url
-                  : `${BASE_URL}/${url.replace(/^public\//, "")}`,
+                  ? `${url}?t=${Date.now()}`
+                  : `${BASE_URL}/${url.replace(/^public\//, "")}?t=${Date.now()}`,
                 name: url.split("/").pop(),
                 type: "application/pdf",
                 existing: true,
@@ -71,6 +70,7 @@ export default function PageUpdate({ navigation, route }) {
           : []
       );
 
+      // wilayah
       if (data?.region) {
         const map = {
           TULUNGAGUNG: "Radar Tulungagung",
@@ -149,7 +149,7 @@ export default function PageUpdate({ navigation, route }) {
   const removePdf = (index) => {
     const file = pdfs[index];
     if (file.existing) {
-      setRemovedPdfs((prev) => [...prev, file.name]); // simpan nama file lama
+      setRemovedPdfs((prev) => [...prev, file.name]);
     }
     setPdfs((prev) => prev.filter((_, i) => i !== index));
   };
@@ -165,11 +165,6 @@ export default function PageUpdate({ navigation, route }) {
     }
 
     try {
-      console.log("📤 Mengirim update ke BE...");
-      console.log("Cover:", cover);
-      console.log("PDF:", pdfs);
-      console.log("Wilayah:", selectedWilayah);
-
       const regionMap = {
         "Radar Tulungagung": "TULUNGAGUNG",
         "Radar Blitar": "BLITAR",
@@ -180,30 +175,31 @@ export default function PageUpdate({ navigation, route }) {
       formData.append("id", id);
       formData.append("region", regionMap[selectedWilayah] || "TULUNGAGUNG");
 
+      // cover baru
       if (!cover.existing) {
         formData.append("image", {
           uri: cover.uri.startsWith("file://")
             ? cover.uri
             : "file://" + cover.uri,
-          name: cover.name || "cover.jpg",
-          type: cover.type || "image/jpeg",
+          name: cover.name,
+          type: cover.type,
         });
       }
 
-      // kirim semua pdf baru
+      // PDF baru
       pdfs.forEach((file) => {
         if (!file.existing) {
           formData.append("pdfUrl", {
             uri: file.uri.startsWith("file://")
               ? file.uri
               : "file://" + file.uri,
-            name: file.name || "file.pdf",
-            type: file.type || "application/pdf",
+            name: file.name,
+            type: file.type,
           });
         }
       });
 
-      // ⬅️ TAMBAHKAN DI SINI
+      // PDF lama yang dihapus
       if (removedPdfs.length > 0) {
         formData.append("removePdf", JSON.stringify(removedPdfs));
       }
@@ -218,9 +214,7 @@ export default function PageUpdate({ navigation, route }) {
         `${BASE_URL}/RadarApps/api/v1/news/update/${id}`,
         {
           method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
           body: formData,
         }
       );
@@ -230,6 +224,7 @@ export default function PageUpdate({ navigation, route }) {
 
       if (res.ok) {
         Alert.alert("Sukses", "Berita berhasil diperbarui!");
+        fetchDetail(); // refresh data
         navigation.navigate("HomeUpdate", { refresh: true });
       } else {
         Alert.alert("Error", result.message || "Gagal update berita.");
@@ -264,7 +259,6 @@ export default function PageUpdate({ navigation, route }) {
         </Text>
       </View>
 
-      {/* Content */}
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 35 }}
       >
@@ -402,11 +396,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
-  content: {
-    paddingHorizontal: 20,
-    paddingTop: 30,
-    paddingVertical: 20,
-  },
   title: {
     fontSize: 20,
     fontWeight: "bold",
@@ -419,11 +408,7 @@ const styles = StyleSheet.create({
     marginBottom: 25,
     fontSize: 13,
   },
-  label: {
-    fontWeight: "bold",
-    marginBottom: 8,
-    fontSize: 15,
-  },
+  label: { fontWeight: "bold", marginBottom: 8, fontSize: 15 },
   uploadBox: {
     backgroundColor: "#fff",
     borderRadius: 12,
@@ -440,15 +425,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     marginBottom: 6,
   },
-  uploadText: {
-    color: "#aaa",
-    fontSize: 15,
-  },
-  note: {
-    fontSize: 12,
-    color: "#888",
-    marginBottom: 20,
-  },
+  uploadText: { color: "#aaa", fontSize: 15 },
+  note: { fontSize: 12, color: "#888", marginBottom: 20 },
   input: {
     backgroundColor: "#fff",
     borderRadius: 12,
@@ -457,11 +435,7 @@ const styles = StyleSheet.create({
     padding: 14,
     marginBottom: 20,
   },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
+  row: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   button: {
     backgroundColor: "#1E4B8A",
     paddingVertical: 15,
@@ -473,22 +447,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 5,
   },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
+  buttonText: { color: "#fff", fontWeight: "bold", fontSize: 16 },
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.4)",
     justifyContent: "center",
     padding: 20,
   },
-  modalContent: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    paddingVertical: 10,
-  },
+  modalContent: { backgroundColor: "#fff", borderRadius: 10, paddingVertical: 10 },
   modalItem: {
     paddingVertical: 12,
     paddingHorizontal: 20,
