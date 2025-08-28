@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,9 +10,11 @@ import {
   TextInput,
   StatusBar,
   Keyboard,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function PageComment({ navigation }) {
   const [comments, setComments] = useState([
@@ -21,11 +23,65 @@ export default function PageComment({ navigation }) {
     { name: 'Andrew Nicholas', comment: 'Keren banget, talent anak muda sekarang. Semoga terus berkembang ya...' },
   ]);
   const [newComment, setNewComment] = useState('');
+  const [token, setToken] = useState(null);
 
-  const handleSendComment = () => {
-    if (newComment.trim() !== '') {
-      setComments([...comments, { name: 'Anda', comment: newComment }]);
-      setNewComment('');
+  // Ambil token dari AsyncStorage saat pertama kali buka page
+  useEffect(() => {
+    const getToken = async () => {
+      try {
+        const savedToken = await AsyncStorage.getItem('token'); // 🔥 samakan key
+        console.log("🔥 Token dari AsyncStorage:", savedToken);
+  
+        if (savedToken) {
+          setToken(savedToken);
+        } else {
+          console.warn("Token belum ada, user mungkin belum login.");
+        }
+      } catch (error) {
+        console.error("Gagal ambil token:", error);
+      }
+    };
+    getToken();
+  }, []);
+  
+
+  const handleSendComment = async () => {
+    if (newComment.trim() === '') return;
+
+    if (!token) {
+      Alert.alert("Error", "Anda harus login terlebih dahulu untuk komentar.");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://192.168.0.13:3000/RadarApps/api/v1/comments/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`, // pakai token dari AsyncStorage
+        },
+        body: JSON.stringify({
+          newsId: "687a69bf9768676cdb0f242c", // bisa diganti sesuai halaman epaper
+          content: newComment,
+          userId: "687a37159bf1faaa1bf36f10", // sementara hardcode, bisa ambil dari data login user
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setComments([
+          ...comments,
+          { name: "Anda", comment: result.data.content },
+        ]);
+        setNewComment("");
+      } else {
+        console.error("Gagal buat komentar:", result.message);
+        Alert.alert("Error", result.message || "Gagal membuat komentar.");
+      }
+    } catch (error) {
+      console.error("Error saat create comment:", error);
+      Alert.alert("Error", "Terjadi kesalahan saat menghubungi server.");
     }
   };
 

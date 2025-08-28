@@ -23,11 +23,7 @@ export default function PageCreate({ navigation }) {
   const [selectedWilayah, setSelectedWilayah] = useState(null);
   const [wilayahModalVisible, setWilayahModalVisible] = useState(false);
 
-  const wilayahList = [
-    'Radar Tulungagung',
-    'Radar Trenggalek',
-    'Radar Blitar',
-  ];
+  const wilayahList = ['Radar Tulungagung', 'Radar Trenggalek', 'Radar Blitar'];
 
   const pickCoverImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -58,17 +54,70 @@ export default function PageCreate({ navigation }) {
     });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!coverUri || !pdfFile || !selectedWilayah) {
       Alert.alert('Lengkapi Data', 'Silakan unggah cover, file PDF, dan pilih wilayah terlebih dahulu.');
       return;
     }
 
-    Alert.alert('Berhasil', 'Data berhasil disimpan!');
-    console.log('Cover URI:', coverUri);
-    console.log('PDF File:', pdfFile);
-    console.log('Tanggal:', formatDate(date));
-    console.log('Wilayah:', selectedWilayah);
+    const formData = new FormData();
+
+    // Upload Cover Image
+    const filenameImage = coverUri.split('/').pop();
+    const matchImage = /\.(\w+)$/.exec(filenameImage || '');
+    const typeImage = matchImage ? `image/${matchImage[1]}` : 'image';
+
+    formData.append('image', {
+      uri: coverUri,
+      name: filenameImage,
+      type: typeImage,
+    });
+
+    // Upload PDF File
+    const filenamePdf = pdfFile.name;
+    const typePdf = 'application/pdf';
+
+    formData.append('pdfUrl', {
+      uri: pdfFile.uri,
+      name: filenamePdf,
+      type: typePdf,
+    });
+
+    // Region Mapping
+    let region = '';
+    if (selectedWilayah.includes('Tulungagung')) region = 'TULUNGAGUNG';
+    else if (selectedWilayah.includes('Blitar')) region = 'BLITAR';
+    else if (selectedWilayah.includes('Trenggalek')) region = 'TRENGGALEK';
+
+    // Tanggal publish
+    formData.append('region', region);
+    formData.append('publishedAt', new Date(date).toISOString());
+
+    try {
+      const response = await fetch('http://192.168.0.27:3000/RadarApps/api/v1/news/create', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert('Berhasil', 'Berita berhasil disimpan!');
+        setCoverUri(null);
+        setPdfFile(null);
+        setSelectedWilayah(null);
+        setDate(new Date());
+      } else {
+        console.error('Gagal menyimpan:', data);
+        Alert.alert('Gagal', data.message || 'Terjadi kesalahan saat menyimpan berita.');
+      }
+    } catch (error) {
+      console.error('Error saat mengunggah:', error);
+      Alert.alert('Error', 'Tidak dapat terhubung ke server.');
+    }
   };
 
   return (
@@ -251,7 +300,6 @@ const styles = StyleSheet.create({
   },
   saveText: { color: '#fff', fontWeight: 'bold' },
 
-  // Modal Styles
   modalOverlay: {
     flex: 1,
     justifyContent: 'center',

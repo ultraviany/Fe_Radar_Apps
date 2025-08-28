@@ -49,7 +49,7 @@ export default function SignUpWithEmail({ navigation }) {
 
     try {
       const response = await fetch(
-        "http://192.168.1.93:3000/RadarApps/api/v1/register",
+        "http://192.168.0.27:3000/RadarApps/api/v1/register",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
