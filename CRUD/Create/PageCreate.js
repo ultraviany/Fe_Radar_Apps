@@ -397,7 +397,6 @@ const styles = StyleSheet.create({
     borderColor: "#e5e7eb",
   },
 
-  // Modal Styles
   modalOverlay: {
     flex: 1,
     justifyContent: "center",
