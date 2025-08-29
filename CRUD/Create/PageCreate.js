@@ -25,6 +25,8 @@ export default function PageCreate({ navigation }) {
   const [selectedWilayah, setSelectedWilayah] = useState(null);
   const [wilayahModalVisible, setWilayahModalVisible] = useState(false);
 
+  const BASE_URL = "http://192.168.1.93:3000";
+
   const wilayahList = ["TULUNGAGUNG", "TRENGGALEK", "BLITAR"];
 
   const wilayahLabel = {
@@ -150,7 +152,7 @@ export default function PageCreate({ navigation }) {
       console.log("===KIRIM REQUEST BE===");
 
       const response = await fetch(
-        "http://192.168.1.93:3000/RadarApps/api/v1/news/create",
+        `${BASE_URL}/RadarApps/api/v1/news/create`,
         {
           method: "POST",
           headers: {

@@ -12,6 +12,7 @@ import {
   Alert,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+const BASE_URL = "http://192.168.1.93:3000";
 
 export default function PageKonfrimOTP({ navigation }) {
   const [otp, setOtp] = useState("");
@@ -32,7 +33,7 @@ export default function PageKonfrimOTP({ navigation }) {
       console.log("Kirim konfirmasi otp:", { otp });
 
       const response = await fetch(
-        "http://192.168.1.93:3000/RadarApps/api/v1/otp/confirm",
+        `${BASE_URL}/RadarApps/api/v1/otp/confirm`,
         {
           method: "POST",
           headers: {

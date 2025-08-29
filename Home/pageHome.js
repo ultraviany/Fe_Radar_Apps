@@ -19,7 +19,6 @@ export default function HomePage({ navigation }) {
   const [activeTab, setActiveTab] = useState("All Epaper");
   const { toggleSave, isNewsSaved } = useContext(SaveContext);
   const [likedItems, setLikedItems] = useState([]);
-
   const [tulungagungNews, setTulungagungNews] = useState([]);
   const [blitarNews, setBlitarNews] = useState([]);
   const [trenggalekNews, setTrenggalekNews] = useState([]);
@@ -28,7 +27,7 @@ export default function HomePage({ navigation }) {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
-  const quantity = 10; // ambil 5 per halaman
+  const quantity = 10; // ambil 10 per halaman
 
   const toggleLike = (id) => {
     setLikedItems((prev) =>

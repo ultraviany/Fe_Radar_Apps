@@ -13,6 +13,8 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+const BASE_URL = "http://192.168.1.93:3000";
+
 export default function PagePwOTP({ navigation }) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -54,7 +56,7 @@ export default function PagePwOTP({ navigation }) {
 
       // Kirim permintaan update password ke backend
       const response = await fetch(
-        "http://192.168.1.93:3000/RadarApps/api/v1/updateUser",
+        `${BASE_URL}/RadarApps/api/v1/updateUser`,
         {
           method: "PUT",
           headers: {

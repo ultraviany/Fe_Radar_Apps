@@ -14,6 +14,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+const BASE_URL = "http://192.168.1.93:3000";
 
 const KelolaAkun = () => {
   const navigation = useNavigation();
@@ -30,7 +31,7 @@ const KelolaAkun = () => {
           if (!token) return Alert.alert("Error", "Token tidak ditemukan");
 
           const res = await fetch(
-            "http://192.168.1.93:3000/RadarApps/api/v1/profile",
+            `${BASE_URL}/RadarApps/api/v1/profile`,
             {
               method: "GET",
               headers: {
@@ -46,7 +47,7 @@ const KelolaAkun = () => {
             setEmail(json.data.email);
             setProfileImage(
               json.data.image
-                ? `http://192.168.1.93:3000/user/${encodeURIComponent(json.data.image)}`
+                ? `${BASE_URL}/user/${encodeURIComponent(json.data.image)}`
                 : null
             );
           } else {
@@ -110,7 +111,7 @@ const KelolaAkun = () => {
       }
 
       const res = await fetch(
-        "http://192.168.1.93:3000/RadarApps/api/v1/updateUser",
+        `${BASE_URL}/RadarApps/api/v1/updateUser`,
         {
           method: "PUT",
           headers: {
@@ -121,7 +122,7 @@ const KelolaAkun = () => {
       );
 
       const json = await res.json();
-      console.log("Gambar URL:", `http://192.168.1.93:3000/user/${encodeURIComponent(json.data.image)}`);
+      console.log("Gambar URL:", `${BASE_URL}/user/${encodeURIComponent(json.data.image)}`);
       console.log("Image from API:", json.data.image);
       console.log("Respon updateUser:", json);
 

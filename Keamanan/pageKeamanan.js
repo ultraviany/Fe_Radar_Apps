@@ -13,6 +13,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+const BASE_URL = "http://192.168.1.93:3000";
+
 const Keamananpage = ({ navigation }) => {
   const [user, setUser] = useState(null);
 
@@ -29,7 +31,7 @@ const Keamananpage = ({ navigation }) => {
           }
 
           const response = await fetch(
-            "http://192.168.1.93:3000/RadarApps/api/v1/profile",
+            `${BASE_URL}/RadarApps/api/v1/profile`,
             {
               method: "GET",
               headers: {
@@ -72,7 +74,7 @@ const Keamananpage = ({ navigation }) => {
     });
 
     const response = await fetch(
-      "http://192.168.1.93:3000/RadarApps/api/v1/otp",
+      `${BASE_URL}/RadarApps/api/v1/otp`,
       {
         method: "POST",
         headers: {
@@ -122,7 +124,7 @@ const Keamananpage = ({ navigation }) => {
       <View style={styles.accountBox}>
         {user?.image ? (
           <Image
-            source={{ uri: `http://192.168.1.93:3000/user/${user.image}` }}
+            source={{ uri: `${BASE_URL}/user/${user.image}` }}
             style={styles.avatar}
           />
         ) : (

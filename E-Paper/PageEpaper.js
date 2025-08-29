@@ -152,7 +152,7 @@ export default function PageEpaper({ navigation, route }) {
       {/* KOMENTAR STICKY */}
       <TouchableOpacity
         style={styles.commentArea}
-        onPress={() => navigation.navigate("PageComment")}
+        onPress={() => navigation.navigate("PageComment", { newsId})}
       >
         <Ionicons name="chatbubble-ellipses" size={28} color="#000" style={styles.commentIcon} />
         <View style={styles.commentBox}>

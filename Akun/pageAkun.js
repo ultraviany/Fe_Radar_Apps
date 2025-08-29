@@ -19,6 +19,7 @@ import {
 } from "@expo/vector-icons";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+const BASE_URL = "http://192.168.1.93:3000";
 
 const Pageakun = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -39,7 +40,7 @@ const Pageakun = () => {
           }
 
           const response = await fetch(
-            "http://192.168.1.93:3000/RadarApps/api/v1/profile",
+            `${BASE_URL}/RadarApps/api/v1/profile`,
             {
               method: "GET",
               headers: {
@@ -77,7 +78,7 @@ const Pageakun = () => {
         <View style={styles.profileBox}>
           {user?.image ? (
             <Image
-              source={{ uri: `http://192.168.1.93:3000/user/${user.image}` }}
+              source={{ uri: `${BASE_URL}/user/${user.image}` }}
               style={styles.avatar}
             />
           ) : (
@@ -165,7 +166,7 @@ const Pageakun = () => {
                       return; // menghentikan eksekusi
                     }
 
-                    const response = await fetch ("http://192.168.1.93:3000/RadarApps/api/v1/logout", {
+                    const response = await fetch (`${BASE_URL}/RadarApps/api/v1/logout`, {
                       method: "POST", // mengirim request logout ke server dengan metode post dilihat di postman
                       headers: {
                         Authorization: `Bearer ${token}`, //menyisipkan token ke header authorization
