@@ -11,6 +11,7 @@ import ContactCard from "./ContactSection";
 import NewsTabBar from "./NewsTabBar";
 import NewsSection from "./NewsSection";
 import { SaveContext } from "../Context/SaveContext";
+import { LikeContext } from "../Context/LikeContext";
 import { useFocusEffect } from "@react-navigation/native";
 
 const BASE_URL = "http://192.168.1.93:3000";
@@ -18,7 +19,7 @@ const BASE_URL = "http://192.168.1.93:3000";
 export default function HomePage({ navigation }) {
   const [activeTab, setActiveTab] = useState("All Epaper");
   const { toggleSave, isNewsSaved } = useContext(SaveContext);
-  const [likedItems, setLikedItems] = useState([]);
+  const { likedNews, toggleLike } = useContext(LikeContext);
   const [tulungagungNews, setTulungagungNews] = useState([]);
   const [blitarNews, setBlitarNews] = useState([]);
   const [trenggalekNews, setTrenggalekNews] = useState([]);
@@ -28,12 +29,6 @@ export default function HomePage({ navigation }) {
   const [hasMore, setHasMore] = useState(true);
 
   const quantity = 10; // ambil 10 per halaman
-
-  const toggleLike = (id) => {
-    setLikedItems((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-    );
-  };
 
   const fetchNews = async (pageNumber, isLoadMore = false) => {
     if (isLoadMore) setLoadingMore(true);
@@ -191,7 +186,7 @@ export default function HomePage({ navigation }) {
         <NewsSection
           data={[item]}
           onLike={toggleLike}
-          isLiked={(id) => likedItems.includes(id)}
+          isLiked={(id) => likedNews.includes(id)}
           onSave={toggleSave}
           isNewsSaved={isNewsSaved}
           navigation={navigation}

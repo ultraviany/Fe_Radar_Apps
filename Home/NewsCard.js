@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   View,
   Image,
@@ -8,25 +8,28 @@ import {
   Dimensions,
 } from "react-native";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
+import { LikeContext } from "../Context/LikeContext"; // ambil dari context
 
 const screenWidth = Dimensions.get("window").width;
-// Biar card lebih ke samping → kurangi margin
 const cardWidth = (screenWidth - 10 * 3) / 2;
 
 export default function NewsCard({
   item,
-  onLike,
   onSave,
-  isLiked,
   isNewsSaved,
   navigation,
   showEditButton = false,
   showDeleteButton = false,
   onDelete,
 }) {
+  // 🎯 langsung ambil dari LikeContext
+  const { toggleLike, isLiked } = useContext(LikeContext);
+
   return (
     <View style={[styles.card, { width: cardWidth }]}>
-      <TouchableOpacity onPress={() => navigation.navigate("PageEpaper", { newsId: item.id })}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("PageEpaper", { newsId: item.id })}
+      >
         <Image
           source={{ uri: item.image }}
           style={styles.coverImage}
@@ -69,26 +72,27 @@ export default function NewsCard({
         </View>
 
         {/* Tombol Like & Save */}
-        {onLike && onSave && (
-          <View style={styles.iconRow}>
-            <TouchableOpacity onPress={() => onLike(item.id)}>
-              <AntDesign
-                name={isLiked ? "heart" : "hearto"}
-                size={18}
-                color={isLiked ? "red" : "grey"}
-                style={styles.icon}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => onSave(item)}>
-              <Ionicons
-                name={isNewsSaved ? "bookmark" : "bookmark-outline"}
-                size={18}
-                color={isNewsSaved ? "#1E4B8A" : "grey"}
-                style={styles.icon}
-              />
-            </TouchableOpacity>
-          </View>
-        )}
+        <View style={styles.iconRow}>
+          {/* Like */}
+          <TouchableOpacity onPress={() => toggleLike(item.id)}>
+            <AntDesign
+              name={isLiked(item.id) ? "heart" : "hearto"}
+              size={18}
+              color={isLiked(item.id) ? "red" : "grey"}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+
+          {/* Save */}
+          <TouchableOpacity onPress={() => onSave(item)}>
+            <Ionicons
+              name={isNewsSaved ? "bookmark" : "bookmark-outline"}
+              size={18}
+              color={isNewsSaved ? "#1E4B8A" : "grey"}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
