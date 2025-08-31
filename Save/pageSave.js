@@ -1,5 +1,5 @@
 // Save/pageSave.js
-import React, { useContext } from "react";
+import React, { useContext, useEffect  } from "react";
 import {
   View,
   Text,
@@ -12,7 +12,18 @@ import { SaveContext } from "../Context/SaveContext";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function SavePage({ navigation }) {
-  const { savedNews, toggleSave } = useContext(SaveContext);
+  const { savedNews, toggleSave, fetchSavedNews, page, hasMore, loading } =
+    useContext(SaveContext);
+
+  useEffect(() => {
+    fetchSavedNews(1); // ambil page pertama
+  }, []);
+
+  const loadMore = () => {
+    if (!loading && hasMore) {
+      fetchSavedNews(page + 1);
+    }
+  };
 
   const renderItem = ({ item }) => (
     <View style={styles.card}>
@@ -23,8 +34,12 @@ export default function SavePage({ navigation }) {
         <Ionicons name="bookmark" size={16} color="#1E4B8A" />
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.navigate('PageEpaper', { item })}>
-        <Image source={item.image} style={styles.image} />
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate("PageEpaper", { newsId: item.newsId })
+        }
+      >
+        <Image source={{ uri: item.image }} style={styles.image} />
       </TouchableOpacity>
 
       <View style={styles.infoContainer}>
@@ -37,8 +52,6 @@ export default function SavePage({ navigation }) {
           <Text style={styles.date}>{item.date}</Text>
         </View>
       </View>
-
-
     </View>
   );
 
@@ -47,7 +60,9 @@ export default function SavePage({ navigation }) {
       <View style={styles.header}>
         <View style={styles.headerTextContainer}>
           <Text style={styles.title}>Tersimpan</Text>
-          <Text style={styles.subTitle}>{savedNews.length} Epaper Tersimpan</Text>
+          <Text style={styles.subTitle}>
+            {savedNews.length} Epaper Tersimpan
+          </Text>
         </View>
       </View>
 
@@ -58,16 +73,26 @@ export default function SavePage({ navigation }) {
           <FlatList
             data={savedNews}
             numColumns={2}
-            keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(item) => item.id.toString()}
             renderItem={renderItem}
             columnWrapperStyle={styles.row}
             contentContainerStyle={styles.listContent}
+            onEndReached={loadMore} // load otomatis saat scroll bawah
+            onEndReachedThreshold={0.5} // 50% sebelum bawah
+            ListFooterComponent={
+              loading ? (
+                <Text style={{ textAlign: "center", padding: 10 }}>
+                  Loading...
+                </Text>
+              ) : null
+            }
           />
         )}
       </View>
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#1E4B8A" },
@@ -141,7 +166,7 @@ const styles = StyleSheet.create({
   date: {
     fontSize: 12,
     marginLeft: 6,
-    color: "gray",
+    color: "#1E4B8A",
     fontWeight: "bold",
   },
   dateRow: {

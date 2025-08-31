@@ -22,6 +22,24 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const BASE_URL = "http://192.168.1.93:3000";
 
+// buat menampilkan waktu 
+const formatTimeAgo = (dateString) => {
+  const now = new Date();
+  const commentDate = new Date(dateString);
+  const diff = Math.floor((now - commentDate) / 1000); // selisih dalam detik
+
+  if (diff < 60) return `${diff} detik lalu`;
+  if (diff < 3600) return `${Math.floor(diff / 60)} menit lalu`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)} jam lalu`;
+  if (diff < 604800) return `${Math.floor(diff / 86400)} hari lalu`;
+
+  // jika lebih dari seminggu, tampilkan tanggal pendek
+  return commentDate.toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "short",
+  });
+};
+
 export default function PageComment({ navigation, route }) {
   const newsId = route?.params?.newsId;
   const [comments, setComments] = useState([]);
@@ -88,7 +106,8 @@ export default function PageComment({ navigation, route }) {
           userId: c.user?.id,
           name: c.user?.username || c.user?.name || "Anonymous",
           comment: c.content,
-          userImage: c.user?.image || null, // <--- tambahkan ini
+          userImage: c.user?.image || null, // menambahkan image
+          timeAgo: formatTimeAgo(c.created_at), // meanmbahkan waktu
         }));
         if (isLoadMore) setComments((prev) => [...prev, ...mapped]);
         else setComments(mapped);
@@ -183,9 +202,7 @@ export default function PageComment({ navigation, route }) {
       const result = await res.json();
 
       if (result?.success) {
-        setComments((prev) =>
-          prev.filter((c) => c.id !== selectedComment.id)
-        );
+        setComments((prev) => prev.filter((c) => c.id !== selectedComment.id));
         Alert.alert("Sukses", "Komentar berhasil dihapus");
       } else {
         Alert.alert("Error", result?.message || "Gagal menghapus komentar");
@@ -199,6 +216,7 @@ export default function PageComment({ navigation, route }) {
     }
   };
 
+  // render item comment, menampilkan profile image, username dan hasil comment
   const renderCommentItem = ({ item }) => (
     <TouchableOpacity
       onPress={() => item.userId === userId && handleCommentPress(item)}
@@ -206,19 +224,30 @@ export default function PageComment({ navigation, route }) {
       <View style={styles.commentCard}>
         <View style={styles.commentHeader}>
           {item.userImage ? (
-          <Image
-            source={{ uri: `${BASE_URL}/user/${item.userImage}` }}
-            style={styles.avatarComment}
-          />
-        ) : (
-          <Ionicons
-            name="person-circle"
-            size={30}
-            color="#3B82F6"
-            style={styles.avatarComment}
-          />
-        )}
-          <Text style={styles.commentName}>{item.name}</Text>
+            <Image
+              source={{ uri: `${BASE_URL}/user/${item.userImage}` }}
+              style={styles.avatarComment}
+            />
+          ) : (
+            <Ionicons
+              name="person-circle"
+              size={40}
+              color="#3B82F6"
+              style={styles.avatarComment}
+            />
+          )}
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              flexShrink: 1,
+            }}
+          >
+            <Text style={styles.commentName}>{item.name}</Text>
+            {item.timeAgo && (
+              <Text style={styles.commentTime}> • {item.timeAgo}</Text>
+            )}
+          </View>
         </View>
         <Text style={styles.commentText}>{item.comment}</Text>
       </View>
@@ -229,7 +258,9 @@ export default function PageComment({ navigation, route }) {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : StatusBar.currentHeight || 24}
+      keyboardVerticalOffset={
+        Platform.OS === "ios" ? 0 : StatusBar.currentHeight || 24
+      }
     >
       <StatusBar barStyle="light-content" backgroundColor="#1E4B8A" />
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -250,11 +281,14 @@ export default function PageComment({ navigation, route }) {
 
           <Text style={styles.date}>
             {region
-              ? `RADAR ${region}, ${new Date(publishedAt).toLocaleDateString("id-ID", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })}`
+              ? `RADAR ${region}, ${new Date(publishedAt).toLocaleDateString(
+                  "id-ID",
+                  {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  }
+                )}`
               : ""}
           </Text>
 
@@ -263,15 +297,33 @@ export default function PageComment({ navigation, route }) {
           <FlatList
             data={comments}
             renderItem={renderCommentItem}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item, index) =>
+              item.id ? item.id.toString() : index.toString()
+            } // pakai index kalau id null
             contentContainerStyle={{ padding: 20, paddingBottom: 60 }}
             onEndReached={loadMoreComments}
             onEndReachedThreshold={0.2}
             ListFooterComponent={
-              loadingMore ? <ActivityIndicator size="small" color="#1E4B8A" style={{ marginVertical: 10 }} /> : null
+              loadingMore ? (
+                <ActivityIndicator
+                  size="small"
+                  color="#1E4B8A"
+                  style={{ marginVertical: 10 }}
+                />
+              ) : null
             }
             ListEmptyComponent={
-              !loading && <Text style={{ textAlign: "center", marginTop: 20, color: "#6B7280" }}>Belum ada komentar.</Text>
+              !loading && (
+                <Text
+                  style={{
+                    textAlign: "center",
+                    marginTop: 20,
+                    color: "#6B7280",
+                  }}
+                >
+                  Belum ada komentar
+                </Text>
+              )
             }
           />
 
@@ -312,7 +364,7 @@ export default function PageComment({ navigation, route }) {
                     onPress={() => setModalVisible(false)}
                     style={[styles.modalButton, { backgroundColor: "white" }]}
                   >
-                    <Text style={{ color: "#1E4B8A", }}>Batal</Text>
+                    <Text style={{ color: "#1E4B8A" }}>Batal</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -339,7 +391,13 @@ const styles = StyleSheet.create({
   headerSubtitle: { fontSize: 25, marginTop: 8 },
   yellowText: { color: "#efbe1eff", fontWeight: "bold" },
   whiteText: { color: "#fff", fontWeight: "bold" },
-  date: { textAlign: "center", fontWeight: "bold", marginTop: 20, marginBottom: 25, fontSize: 15 },
+  date: {
+    textAlign: "center",
+    fontWeight: "bold",
+    marginTop: 20,
+    marginBottom: 25,
+    fontSize: 15,
+  },
   commentCard: {
     backgroundColor: "#fff",
     borderRadius: 12,
@@ -352,7 +410,11 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 },
   },
-  commentHeader: { flexDirection: "row", alignItems: "center", marginBottom: 6 },
+  commentHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 6,
+  },
   commentName: { fontWeight: "bold", fontSize: 14 },
   commentText: { fontSize: 14, color: "#111827" },
   commentInputArea: {
@@ -376,8 +438,18 @@ const styles = StyleSheet.create({
     borderColor: "#D1D5DB",
     color: "#111827",
   },
-  modalBackground: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)", justifyContent: "center", alignItems: "center" },
-  modalContent: { backgroundColor: "#fff", padding: 20, borderRadius: 12, width: "80%" },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 12,
+    width: "80%",
+  },
   modalButton: {
     flex: 1,
     backgroundColor: "#1E4B8A",
@@ -386,14 +458,24 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     borderWidth: 1,
-    borderColor:"#1E4B8A",
+    borderColor: "#1E4B8A",
   },
-  commentLabel: { fontSize: 18, fontWeight: "bold", marginHorizontal: 20, marginBottom: 10 },
+  commentLabel: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginHorizontal: 20,
+    marginBottom: 10,
+  },
   avatarComment: {
-  width: 30,
-  height: 30,
-  borderRadius: 15,
-  marginRight: 8,
-},
-
+    width: 40,
+    height: 40,
+    borderRadius: 15,
+    marginRight: 8,
+  },
+  commentTime: {
+    fontSize: 12,
+    color: "#6B7280",
+    marginLeft: 4,
+    flexShrink: 1,
+  },
 });

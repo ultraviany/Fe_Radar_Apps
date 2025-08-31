@@ -59,10 +59,6 @@ export default function HomePage({ navigation }) {
             ? `${BASE_URL}/news/${fixedImage}`
             : "https://via.placeholder.com/150";
 
-          console.log("RAW IMAGE:", item.image);
-          console.log("FIXED IMAGE:", fixedImage);
-          console.log("FINAL URL:", imageUrl);
-
           // mapping region BE → FE
           const regionMap = {
             TULUNGAGUNG: "Radar Tulungagung",

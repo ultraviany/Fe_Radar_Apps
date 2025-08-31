@@ -75,7 +75,7 @@ export default function NewsCard({
               <AntDesign
                 name={isLiked ? "heart" : "hearto"}
                 size={18}
-                color={isLiked ? "red" : "#000"}
+                color={isLiked ? "red" : "grey"}
                 style={styles.icon}
               />
             </TouchableOpacity>
@@ -83,7 +83,7 @@ export default function NewsCard({
               <Ionicons
                 name={isNewsSaved ? "bookmark" : "bookmark-outline"}
                 size={18}
-                color={isNewsSaved ? "#1E4B8A" : "#000"}
+                color={isNewsSaved ? "#1E4B8A" : "grey"}
                 style={styles.icon}
               />
             </TouchableOpacity>
