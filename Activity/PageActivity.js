@@ -1,18 +1,28 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import TabButton from "./ActivityTabButton";
 import ActivityCard from "./ActivityCard";
-import { allActivities, commentsOnly, likedOnly } from "./ActivityService";
 import { Ionicons } from "@expo/vector-icons";
+import { useActivities } from "./ActivityService";
 
 export default function ActivityPage() {
   const [activeTab, setActiveTab] = useState("Semua");
+  const { comments, likes, activities, loading } = useActivities();
 
   const getData = () => {
-    if (activeTab === "Komentar") return commentsOnly;
-    if (activeTab === "Disukai") return likedOnly;
-    return allActivities;
+    if (activeTab === "Komentar") return comments;
+    if (activeTab === "Disukai") return likes;
+    return activities;
   };
+
+  // 🔥 Tambahin di sini untuk cek data sebelum render
+  console.log("🔥 Rendered Data:", getData());
 
   return (
     <View style={styles.container}>
@@ -20,6 +30,7 @@ export default function ActivityPage() {
         <Ionicons name="time" size={20} color="#2F5C9A" />
         <Text style={styles.header}>Aktivitas</Text>
       </View>
+
       <View style={styles.tabContainer}>
         <TabButton
           label="Semua Aktivitas"
@@ -38,11 +49,19 @@ export default function ActivityPage() {
         />
       </View>
 
-      <ScrollView style={styles.scrollView}>
-        {getData().map((item) => (
-          <ActivityCard key={item.id} data={item} />
-        ))}
-      </ScrollView>
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color="#2F5C9A"
+          style={{ marginTop: 30 }}
+        />
+      ) : (
+        <ScrollView style={styles.scrollView}>
+          {getData().map((item, idx) => (
+            <ActivityCard key={`${item.type}-${item.id}`} data={item} />
+          ))}
+        </ScrollView>
+      )}
     </View>
   );
 }
@@ -60,15 +79,13 @@ const styles = StyleSheet.create({
     marginLeft: 9,
   },
   textHeader: {
-    fontSize: 18,
-    fontWeight: "bold",
     flexDirection: "row",
     marginBottom: 15,
+    alignItems: "center",
   },
   tabContainer: {
     flexDirection: "row",
     marginBottom: 12,
-    // paddingHorizontal:12,
   },
   scrollView: {
     flex: 1,
