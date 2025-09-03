@@ -15,6 +15,7 @@ import {
   ActivityIndicator,
   Modal,
   Image,
+  SafeAreaView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
@@ -22,7 +23,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const BASE_URL = "http://192.168.1.93:3000";
 
-// buat menampilkan waktu 
+// buat menampilkan waktu
 const formatTimeAgo = (dateString) => {
   const now = new Date();
   const commentDate = new Date(dateString);
@@ -217,42 +218,64 @@ export default function PageComment({ navigation, route }) {
   };
 
   // render item comment, menampilkan profile image, username dan hasil comment
-  const renderCommentItem = ({ item }) => (
-    <TouchableOpacity
-      onPress={() => item.userId === userId && handleCommentPress(item)}
-    >
-      <View style={styles.commentCard}>
-        <View style={styles.commentHeader}>
-          {item.userImage ? (
-            <Image
-              source={{ uri: `${BASE_URL}/user/${item.userImage}` }}
-              style={styles.avatarComment}
-            />
-          ) : (
-            <Ionicons
-              name="person-circle"
-              size={40}
-              color="#3B82F6"
-              style={styles.avatarComment}
-            />
-          )}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              flexShrink: 1,
-            }}
-          >
-            <Text style={styles.commentName}>{item.name}</Text>
-            {item.timeAgo && (
-              <Text style={styles.commentTime}> • {item.timeAgo}</Text>
+  const CommentItem = ({ item, userId, handleCommentPress }) => {
+    const [expanded, setExpanded] = useState(false);
+
+    const MAX_LENGTH = 100;
+    const isLong = item.comment.length > MAX_LENGTH;
+    const displayedText = expanded
+      ? item.comment
+      : isLong
+      ? item.comment.slice(0, MAX_LENGTH) + "..."
+      : item.comment;
+
+    return (
+      <TouchableOpacity
+        onPress={() => item.userId === userId && handleCommentPress(item)}
+      >
+        <View style={styles.commentCard}>
+          <View style={styles.commentHeader}>
+            {item.userImage ? (
+              <Image
+                source={{ uri: `${BASE_URL}/user/${item.userImage}` }}
+                style={styles.avatarComment}
+              />
+            ) : (
+              <Ionicons
+                name="person-circle"
+                size={40}
+                color="#3B82F6"
+                style={styles.avatarComment}
+              />
             )}
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                flexShrink: 1,
+              }}
+            >
+              <Text style={styles.commentName}>{item.name}</Text>
+              {item.timeAgo && (
+                <Text style={styles.commentTime}> • {item.timeAgo}</Text>
+              )}
+            </View>
           </View>
+
+          {/* isi komentar */}
+          <Text style={styles.commentText}>
+            {displayedText}
+            {isLong && !expanded && (
+              <Text style={styles.moreText} onPress={() => setExpanded(true)}>
+                {" "}
+                selengkapnya
+              </Text>
+            )}
+          </Text>
         </View>
-        <Text style={styles.commentText}>{item.comment}</Text>
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <KeyboardAvoidingView
@@ -264,8 +287,8 @@ export default function PageComment({ navigation, route }) {
     >
       <StatusBar barStyle="light-content" backgroundColor="#1E4B8A" />
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.inner}>
-          <View style={styles.header}>
+        <SafeAreaView style={styles.inner}>
+          <SafeAreaView style={styles.header}>
             <TouchableOpacity
               onPress={() => navigation.goBack()}
               style={styles.backButton}
@@ -277,7 +300,7 @@ export default function PageComment({ navigation, route }) {
               <Text style={styles.yellowText}>RADAR</Text>
               <Text style={styles.whiteText}> {region.toUpperCase()}</Text>
             </Text>
-          </View>
+          </SafeAreaView>
 
           <Text style={styles.date}>
             {region
@@ -292,15 +315,21 @@ export default function PageComment({ navigation, route }) {
               : ""}
           </Text>
 
-          <Text style={styles.commentLabel}>Komentar</Text>
+          <Text style={styles.commentLabel}>Komentar ({comments.length}) </Text>
 
           <FlatList
             data={comments}
-            renderItem={renderCommentItem}
+            renderItem={({ item }) => (
+              <CommentItem
+                item={item}
+                userId={userId}
+                handleCommentPress={handleCommentPress}
+              />
+            )}
             keyExtractor={(item, index) =>
               item.id ? item.id.toString() : index.toString()
             } // pakai index kalau id null
-            contentContainerStyle={{ padding: 20, paddingBottom: 60 }}
+            contentContainerStyle={{ padding: 20, paddingBottom: 80 }}
             onEndReached={loadMoreComments}
             onEndReachedThreshold={0.2}
             ListFooterComponent={
@@ -370,7 +399,7 @@ export default function PageComment({ navigation, route }) {
               </View>
             </View>
           </Modal>
-        </View>
+        </SafeAreaView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
@@ -418,6 +447,7 @@ const styles = StyleSheet.create({
   commentName: { fontWeight: "bold", fontSize: 14 },
   commentText: { fontSize: 14, color: "#111827" },
   commentInputArea: {
+    // position: "absolute",
     backgroundColor: "#F3F4F6",
     paddingVertical: 10,
     paddingHorizontal: 20,
@@ -478,4 +508,8 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     flexShrink: 1,
   },
+  moreText: {
+  color: "#a3a4a5ff",
+  fontWeight: "bold",
+}
 });

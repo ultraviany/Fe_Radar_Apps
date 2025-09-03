@@ -5,6 +5,7 @@ import {
   ActivityIndicator,
   StyleSheet,
   Text,
+  SafeAreaView,
 } from "react-native";
 import Header from "./HeaderSection";
 import ContactCard from "./ContactSection";
@@ -197,9 +198,9 @@ export default function HomePage({ navigation }) {
       contentContainerStyle={{ paddingHorizontal: 12 }}
       ListHeaderComponent={
         <>
-          <View style={{ marginHorizontal: -16 }}>
+          <SafeAreaView style={{ marginHorizontal: -16 }}>
             <Header />
-          </View>
+          </SafeAreaView>
           <ContactCard />
           <NewsTabBar activeTab={activeTab} setActiveTab={setActiveTab} />
         </>

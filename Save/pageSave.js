@@ -7,6 +7,7 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
+  SafeAreaView,
 } from "react-native";
 import { SaveContext } from "../Context/SaveContext";
 import { Ionicons } from "@expo/vector-icons";
@@ -56,7 +57,7 @@ export default function SavePage({ navigation }) {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerTextContainer}>
           <Text style={styles.title}>Tersimpan</Text>
@@ -89,7 +90,7 @@ export default function SavePage({ navigation }) {
           />
         )}
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

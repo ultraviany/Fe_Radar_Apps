@@ -12,6 +12,7 @@ import {
   Platform,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 const BASE_URL = "http://192.168.1.93:3000";
 
@@ -19,6 +20,7 @@ export default function PageLogin({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
 
   const handleLogin = async () => {
     console.log("🚀 Tombol login ditekan");
@@ -29,14 +31,11 @@ export default function PageLogin({ navigation }) {
     }
 
     try {
-      const response = await fetch(
-        `${BASE_URL}/RadarApps/api/v1/login`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, email, password }),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/RadarApps/api/v1/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, email, password }),
+      });
 
       const result = await response.json();
       console.log("📦 Hasil login:", result.data);
@@ -117,13 +116,25 @@ export default function PageLogin({ navigation }) {
           autoCapitalize="none"
         />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Masukkan kata sandi"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+        <View style={styles.passwordContainer}>
+          <TextInput
+            style={styles.passwordInput}
+            placeholder="Masukkan kata sandi"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={secureTextEntry}
+          />
+          <TouchableOpacity
+            onPress={() => setSecureTextEntry(!secureTextEntry)}
+          >
+            <Ionicons
+              name={secureTextEntry ? "eye-off" : "eye"}
+              size={22}
+              color="#666"
+              style={{ padding: 5 }}
+            />
+          </TouchableOpacity>
+        </View>
 
         <TouchableOpacity onPress={() => navigation.navigate("ResetPassword")}>
           <Text style={styles.forgotPassword}>Lupa kata sandi?</Text>
@@ -175,10 +186,17 @@ const styles = StyleSheet.create({
     width: "100%",
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 12,
+    borderRadius: 16,
     padding: 12,
     marginBottom: 15,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#fff",
+    fontSize: 14,
+    color: "#000",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4,
   },
   forgotPassword: {
     alignSelf: "flex-end",
@@ -205,4 +223,26 @@ const styles = StyleSheet.create({
     color: "#1E3A8A",
     fontWeight: "bold",
   },
+  passwordContainer: {
+  flexDirection: "row",
+  alignItems: "center",
+  borderWidth: 1,
+  borderColor: "#ccc",
+  borderRadius: 16,
+  paddingHorizontal: 10,
+  marginBottom: 15,
+  backgroundColor: "#fff",
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.1,
+  shadowRadius: 4,
+  elevation: 4,
+},
+passwordInput: {
+  flex: 1,
+  paddingVertical: 12,
+  fontSize: 14,
+  color: "#000",
+},
+
 });

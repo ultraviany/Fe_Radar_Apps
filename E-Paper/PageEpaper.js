@@ -10,6 +10,7 @@ import {
   ScrollView,
   Image,
   Modal,
+  SafeAreaView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
@@ -95,7 +96,7 @@ export default function PageEpaper({ navigation, route }) {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {/* HEADER */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
@@ -171,7 +172,7 @@ export default function PageEpaper({ navigation, route }) {
           enableImageZoom={true} // zoom aktif di modal
         />
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 }
 

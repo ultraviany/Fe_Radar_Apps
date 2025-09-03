@@ -28,7 +28,7 @@ export default function ActivityPage() {
     <View style={styles.container}>
       <View style={styles.textHeader}>
         <Ionicons name="time" size={20} color="#2F5C9A" />
-        <Text style={styles.header}>Aktivitas</Text>
+        <Text style={styles.header}>Aktivitas ({getData().length})</Text>
       </View>
 
       <View style={styles.tabContainer}>
@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     flex: 1,
     backgroundColor: "#fff",
+    paddingVertical: 20
   },
   header: {
     fontSize: 18,
