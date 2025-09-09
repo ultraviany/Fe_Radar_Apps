@@ -12,7 +12,7 @@ export default function ContactCard() {
         <Text style={styles.label}>Radar Tulungagung</Text>
         <View style={styles.phoneRow}>
           <Ionicons name="call" size={16} color="#1E4B8A" />
-          <Text style={styles.phoneText}>082330169800</Text>
+          <Text style={styles.phoneText}>082142838281</Text>
         </View>
       </View>
 
@@ -20,7 +20,7 @@ export default function ContactCard() {
         <Text style={styles.label}>Radar Blitar</Text>
         <View style={styles.phoneRow}>
           <Ionicons name="call" size={16} color="#1E4B8A" />
-          <Text style={styles.phoneText}>085649622951</Text>
+          <Text style={styles.phoneText}>0895334620662</Text>
         </View>
       </View>
 
@@ -28,7 +28,7 @@ export default function ContactCard() {
         <Text style={styles.label}>Radar Trenggalek</Text>
         <View style={styles.phoneRow}>
           <Ionicons name="call" size={16} color="#1E4B8A" />
-          <Text style={styles.phoneText}>081330740334</Text>
+          <Text style={styles.phoneText}>085855373647</Text>
         </View>
       </View>
     </View>

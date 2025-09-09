@@ -3,11 +3,11 @@ import { View, Image, StyleSheet, Animated } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function SplashScreen({ navigation }) {
-  const fadeAnim = useRef(new Animated.Value(0)).current; // transparan awal
-  const scaleAnim = useRef(new Animated.Value(0.8)).current; // kecil dulu
+  const fadeAnim = useRef(new Animated.Value(0)).current; 
+  const scaleAnim = useRef(new Animated.Value(0.8)).current;
 
   useEffect(() => {
-    // Jalankan animasi logo
+    // animasi logo
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -22,7 +22,7 @@ export default function SplashScreen({ navigation }) {
       }),
     ]).start();
 
-    // Cek login setelah delay
+    // Cek login 
     const checkLogin = async () => {
       try {
         const token = await AsyncStorage.getItem("token");
