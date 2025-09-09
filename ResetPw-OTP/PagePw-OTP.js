@@ -11,36 +11,101 @@ import {
   Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const BASE_URL = "http://192.168.1.93:3000";
 
 export default function PagePwOTP({ navigation }) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [secure1, setSecure1] = useState(true);
-  const [secure2, setSecure2] = useState(true);
+  const [secure1, setSecure1] = useState(true); // Untuk toggle visibilitas input password
+  const [secure2, setSecure2] = useState(true); // Untuk toggle visibilitas input konfirmasi
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    console.log("proses pengubahan kata sandi");
+
+    // Validasi: semua kolom harus diisi
     if (!password || !confirmPassword) {
       Alert.alert("Peringatan", "Semua kolom harus diisi!");
+      console.warn("Kolom kosong");
       return;
     }
 
+    // Validasi: kata sandi harus cocok
     if (password !== confirmPassword) {
       Alert.alert("Kesalahan", "Kata sandi tidak cocok!");
+      console.warn("Kata sandi tidak cocok");
       return;
     }
 
-    // Simulasi reset berhasil
-    Alert.alert("Berhasil", "Kata sandi berhasil diperbarui", [
-      {
-        text: "OK",
-        onPress: () => {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: "Login" }],
-          });
-        },
-      },
-    ]);
+    try {
+      const userId = await AsyncStorage.getItem("reset_id");
+      // Ambil token ID user dari penyimpanan lokal
+      const resetToken = await AsyncStorage.getItem("reset_token");
+      console.log("Token ID pengguna yang ditemukan:", resetToken);
+      console.log("User ID ditemukan:", userId);
+
+      if (!resetToken || !userId) {
+        Alert.alert(
+          "Error",
+          "Token atau id tidak ditemukan, silahkan verifikasi ulang OTP."
+        );
+        console.error("Token atau id tidak ditemukan di AsyncStorage");
+        return;
+      }
+
+      // Kirim permintaan update password ke backend
+      const response = await fetch(
+        `${BASE_URL}/RadarApps/api/v1/updateUser`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${resetToken}`,
+          },
+          body: JSON.stringify({
+            password,
+            id: userId, // Gunakan token sebagai ID user
+          }),
+        }
+      );
+
+      const resultText = await response.text();
+      console.log("Respon dari server:", resultText);
+
+      try {
+        const result = JSON.parse(resultText);
+
+        if (response.ok) {
+          Alert.alert("Berhasil", "Kata sandi berhasil diperbarui", [
+            {
+              text: "OK",
+              onPress: () => {
+                console.log("Navigasi ke halaman Login dan hapus token");
+                AsyncStorage.removeItem("reset_token");
+                AsyncStorage.removeItem("reset_id"); // Hapus token setelah berhasil
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: "Login" }],
+                });
+              },
+            },
+          ]);
+        } else {
+          console.warn("Gagal memperbarui:", result.message);
+          Alert.alert(
+            "Gagal",
+            result.message || "Gagal memperbarui kata sandi."
+          );
+        }
+      } catch (jsonErr) {
+        console.error("Gagal parsing JSON:", jsonErr, "Teks:", resultText);
+        Alert.alert("Error", "Respon dari server tidak valid.");
+      }
+    } catch (error) {
+      console.error("Terjadi error saat update:", error);
+      Alert.alert("Error", "Terjadi kesalahan saat mengirim permintaan.");
+    }
   };
 
   return (
@@ -55,6 +120,7 @@ export default function PagePwOTP({ navigation }) {
             Masukkan kata sandi yang aman untuk akun kamu.
           </Text>
 
+          {/* Input kata sandi baru */}
           <View style={styles.inputWrapper}>
             <TextInput
               style={styles.input}
@@ -75,6 +141,7 @@ export default function PagePwOTP({ navigation }) {
             </TouchableOpacity>
           </View>
 
+          {/* Input konfirmasi kata sandi */}
           <View style={styles.inputWrapper}>
             <TextInput
               style={styles.input}
@@ -95,6 +162,7 @@ export default function PagePwOTP({ navigation }) {
             </TouchableOpacity>
           </View>
 
+          {/* Tombol submit */}
           <TouchableOpacity style={styles.button} onPress={handleSubmit}>
             <Text style={styles.buttonText}>Simpan Kata Sandi</Text>
           </TouchableOpacity>

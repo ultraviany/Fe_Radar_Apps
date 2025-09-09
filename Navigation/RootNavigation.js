@@ -14,6 +14,9 @@ import HomePage from "../Home/pageHome";
 import SavePage from "../Save/pageSave";
 import Pageakun from "../Akun/pageAkun";
 
+// splashscreen
+import SplashScreen from "../splashscreen/pageSplashScreen";
+
 // Autentikasi
 import PageLogin from "../Login/PageLogin";
 import PageSignUp from "../SignUp/PageSignUp";
@@ -83,9 +86,10 @@ export default function RootNavigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Login"
+        initialRouteName="Splash"
         screenOptions={{ headerShown: false }}
       >
+        <Stack.Screen name="Splash" component={SplashScreen} />
         {/* Autentikasi */}
         <Stack.Screen name="Login" component={PageLogin} />
         <Stack.Screen name="SignUp" component={PageSignUp} />
