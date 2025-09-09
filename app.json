@@ -8,9 +8,9 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "image": "./assets/splash-epaper.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#1E4B8A"
     },
     "ios": {
       "supportsTablet": true,

@@ -68,7 +68,7 @@ export default function ActivityPage() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     paddingTop: 15,
     flex: 1,
     backgroundColor: "#fff",
