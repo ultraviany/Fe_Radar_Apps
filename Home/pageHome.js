@@ -20,7 +20,9 @@ const BASE_URL = "http://192.168.1.93:3000";
 export default function HomePage({ navigation }) {
   const [activeTab, setActiveTab] = useState("All Epaper");
   const { toggleSave, isNewsSaved } = useContext(SaveContext);
-  const { likedNews, toggleLike } = useContext(LikeContext);
+  const { likedNews, toggleLike, likesCount, hydrateLikes } =
+    useContext(LikeContext);
+
   const [tulungagungNews, setTulungagungNews] = useState([]);
   const [blitarNews, setBlitarNews] = useState([]);
   const [trenggalekNews, setTrenggalekNews] = useState([]);
@@ -29,7 +31,7 @@ export default function HomePage({ navigation }) {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
-  const quantity = 10; // ambil 10 per halaman
+  const quantity = 10;
 
   const fetchNews = async (pageNumber, isLoadMore = false) => {
     if (isLoadMore) setLoadingMore(true);
@@ -55,7 +57,6 @@ export default function HomePage({ navigation }) {
             ? `${BASE_URL}/news/${fixedImage}`
             : "https://via.placeholder.com/150";
 
-          // mapping region BE → FE
           const regionMap = {
             TULUNGAGUNG: "Radar Tulungagung",
             BLITAR: "Radar Blitar",
@@ -65,8 +66,8 @@ export default function HomePage({ navigation }) {
           return {
             id: String(item.id),
             image: imageUrl,
-            region: item.region, // tetap huruf gede untuk filter
-            regionLabel: regionMap[item.region] || item.region, // ini buat ditampilkan
+            region: item.region,
+            regionLabel: regionMap[item.region] || item.region,
             date: item.publishedAt
               ? new Date(item.publishedAt).toLocaleDateString("id-ID", {
                   day: "numeric",
@@ -99,6 +100,10 @@ export default function HomePage({ navigation }) {
             ...mapped.filter((n) => n.region.includes("TRENGGALEK")),
           ]);
         }
+
+        // 🔥 hydrate status like utk batch news yg baru dimuat
+        const ids = mapped.map((n) => n.id);
+        hydrateLikes(ids);
 
         if (json.data.data.length < quantity) {
           setHasMore(false);
@@ -188,12 +193,13 @@ export default function HomePage({ navigation }) {
           data={[item]}
           onLike={toggleLike}
           isLiked={(id) => likedNews.includes(id)}
+          likesCount={(id) => likesCount[id] || 0}
           onSave={toggleSave}
           isNewsSaved={isNewsSaved}
           navigation={navigation}
         />
       )}
-      numColumns={2} // 👉 bikin 2 kolom
+      numColumns={2}
       columnWrapperStyle={{ justifyContent: "space-between" }}
       contentContainerStyle={{ paddingHorizontal: 12 }}
       ListHeaderComponent={

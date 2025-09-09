@@ -23,7 +23,7 @@ export default function NewsCard({
   onDelete,
 }) {
   // 🎯 langsung ambil dari LikeContext
-  const { toggleLike, isLiked } = useContext(LikeContext);
+  const { toggleLike, isLiked, likesCount } = useContext(LikeContext);
 
   return (
     <View style={[styles.card, { width: cardWidth }]}>
@@ -74,13 +74,16 @@ export default function NewsCard({
         {/* Tombol Like & Save */}
         <View style={styles.iconRow}>
           {/* Like */}
-          <TouchableOpacity onPress={() => toggleLike(item.id)}>
+          <TouchableOpacity
+            onPress={() => toggleLike(item.id)}
+            style={styles.likeButton}
+          >
             <AntDesign
               name={isLiked(item.id) ? "heart" : "hearto"}
               size={18}
               color={isLiked(item.id) ? "red" : "grey"}
-              style={styles.icon}
             />
+            <Text style={styles.likeCount}>{likesCount[item.id] ?? 0}</Text>
           </TouchableOpacity>
 
           {/* Save */}
@@ -164,4 +167,16 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     shadowOffset: { width: 0, height: 1 },
   },
+  likeButton: {
+  flexDirection: "row",
+  alignItems: "center",
+  marginRight: 3, // kasih jarak biar gak nempel ke icon save
+},
+
+likeCount: {
+  fontSize: 12,
+  color: "#1E4B8A",
+  marginLeft: 4,
+  fontWeight: "500",
+},
 });
