@@ -9,4 +9,4 @@ export default function App() {
     <SaveProvider>
       <RootNavigation />
     </SaveProvider>
-  );
+  )}
