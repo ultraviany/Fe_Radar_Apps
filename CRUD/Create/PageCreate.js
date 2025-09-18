@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -9,25 +9,31 @@ import {
   Alert,
   Modal,
   FlatList,
-} from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import * as DocumentPicker from 'expo-document-picker';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { Ionicons } from '@expo/vector-icons';
+  ScrollView,
+} from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import * as DocumentPicker from "expo-document-picker";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function PageCreate({ navigation }) {
   const [coverUri, setCoverUri] = useState(null);
-  const [pdfFile, setPdfFile] = useState(null);
+  const [pdfFile, setPdfFile] = useState([]); // array untuk banyak pdf
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedWilayah, setSelectedWilayah] = useState(null);
   const [wilayahModalVisible, setWilayahModalVisible] = useState(false);
 
-  const wilayahList = [
-    'Radar Tulungagung',
-    'Radar Trenggalek',
-    'Radar Blitar',
-  ];
+  const BASE_URL = "http://192.168.1.93:3000";
+
+  const wilayahList = ["TULUNGAGUNG", "TRENGGALEK", "BLITAR"];
+
+  const wilayahLabel = {
+    TULUNGAGUNG: "Radar Tulungagung",
+    TRENGGALEK: "Radar Trenggalek",
+    BLITAR: "Radar Blitar",
+  };
 
   const pickCoverImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -39,10 +45,40 @@ export default function PageCreate({ navigation }) {
   };
 
   const pickPdf = async () => {
-    const result = await DocumentPicker.getDocumentAsync({
-      type: 'application/pdf',
-    });
-    if (result.type === 'success') setPdfFile(result);
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: "application/pdf",
+      });
+      console.log("hasil documentPicker:", result);
+
+      if (!result.canceled && result.assets?.length > 0) {
+        const file = result.assets[0];
+
+        // Hilangkan prefix file:// di iOS
+        const fileUri =
+          Platform.OS === "ios" ? file.uri.replace("file://", "") : file.uri;
+
+        const newFile = {
+          uri: fileUri,
+          name: file.name,
+          type: file.mimeType || "application/pdf",
+          size: file.size,
+        };
+
+        setPdfFile((prev) => [...prev, newFile]);
+
+        console.log("PDF disiapkan untuk upload:", newFile);
+      }
+    } catch (error) {
+      console.error("Gagal pilih PDF:", error);
+    }
+  };
+
+  const removePdf = (index) => {
+    const updatedFiles = [...pdfFile];
+    updatedFiles.splice(index, 1);
+    setPdfFile(updatedFiles);
+    console.log("PDF dihapus, index:", index);
   };
 
   const handleDateChange = (event, selectedDate) => {
@@ -51,31 +87,105 @@ export default function PageCreate({ navigation }) {
   };
 
   const formatDate = (date) => {
-    return date.toLocaleDateString('id-ID', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
+    return date.toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
     });
   };
 
-  const handleSave = () => {
-    if (!coverUri || !pdfFile || !selectedWilayah) {
-      Alert.alert('Lengkapi Data', 'Silakan unggah cover, file PDF, dan pilih wilayah terlebih dahulu.');
+  const handleSave = async () => {
+    if (!coverUri || pdfFile.length === 0 || !selectedWilayah) {
+      Alert.alert(
+        "Lengkapi Data",
+        "Silakan unggah cover, minimal 1 file PDF, dan pilih wilayah terlebih dahulu."
+      );
       return;
     }
 
-    Alert.alert('Berhasil', 'Data berhasil disimpan!');
-    console.log('Cover URI:', coverUri);
-    console.log('PDF File:', pdfFile);
-    console.log('Tanggal:', formatDate(date));
-    console.log('Wilayah:', selectedWilayah);
+    try {
+      console.log("===CREATE NEWS===");
+      console.log("cover URI:", coverUri);
+      console.log("PDF File:", pdfFile);
+      console.log("Wilayah:", selectedWilayah);
+      console.log("Tanggal:", date.toISOString());
+
+      const formData = new FormData();
+
+      // cover image
+      formData.append("image", {
+        uri: coverUri,
+        name: `cover-${Date.now()}.jpg`,
+        type: "image/jpeg",
+      });
+      console.log("cover ditambahkan ke data");
+
+      // multiple pdf file
+      pdfFile.forEach((file, index) => {
+        formData.append("pdfUrl", {
+          uri: file.uri,
+          name: file.name || `file-${index + 1}-${Date.now()}.pdf`,
+          type: file.type || "application/pdf",
+        });
+      });
+      console.log("pdf ditambahkan");
+
+      // wilayah
+      formData.append("region", selectedWilayah);
+      console.log("Region ditambahkan:", selectedWilayah);
+
+      // tanggal terbit
+      formData.append("publishedAt", date.toISOString());
+      console.log("Tanggal ditambahkan:", date.toISOString());
+
+      // Cek isi FormData sebelum dikirim
+      for (let pair of formData.entries()) {
+        console.log(pair[0] + ", " + JSON.stringify(pair[1]));
+      }
+
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        Alert.alert("Gagal", "Token tidak ditemukan, silakan login ulang");
+        return;
+      }
+
+      console.log("===KIRIM REQUEST BE===");
+
+      const response = await fetch(
+        `${BASE_URL}/RadarApps/api/v1/news/create`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      );
+      console.log("Status response:", response.status);
+
+      const result = await response.json();
+      console.log("Hasil Response JSON:", result);
+
+      if (response.ok) {
+        Alert.alert("Sukses", "Berita berhasil dibuat!");
+        navigation.goBack();
+      } else {
+        Alert.alert("Gagal", result.message || "Terjadi kesalahan");
+      }
+    } catch (error) {
+      console.error("ERROR di handleSave", error);
+      Alert.alert("Error", "Tidak dapat mengirim data");
+    }
   };
 
   return (
     <View style={styles.container}>
       {/* HEADER */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>EPAPER</Text>
@@ -86,9 +196,14 @@ export default function PageCreate({ navigation }) {
       </View>
 
       {/* FORM */}
-      <View style={styles.formWrapper}>
+      <ScrollView
+        contentContainerStyle={styles.formWrapper}
+        showsVerticalScrollIndicator={false}
+      >
         <Text style={styles.formTitle}>Tambahkan Berita Terbaru</Text>
-        <Text style={styles.formDesc}>Pastikan form yang diisi sesuai dengan judul yang tertera.</Text>
+        <Text style={styles.formDesc}>
+          Pastikan form yang diisi sesuai dengan judul yang tertera.
+        </Text>
 
         <Text style={styles.label}>Cover E-paper</Text>
         <TouchableOpacity style={styles.uploadBox} onPress={pickCoverImage}>
@@ -102,11 +217,25 @@ export default function PageCreate({ navigation }) {
 
         <Text style={styles.label}>PDF E-paper</Text>
         <TouchableOpacity style={styles.uploadBox} onPress={pickPdf}>
-          <Text style={styles.uploadText}>
-            📄 {pdfFile ? pdfFile.name : 'Upload PDF e-paper'}
-          </Text>
+          <Text style={styles.uploadText}>📄 Upload PDF e-paper</Text>
         </TouchableOpacity>
-        <Text style={styles.note}>*pastikan format file yang Anda kirim .pdf</Text>
+
+        {/* Tampilkan list pdf yang sudah dipilih */}
+        {pdfFile.length > 0 &&
+          pdfFile.map((file, index) => (
+            <View key={index} style={styles.pdfItem}>
+              <Text style={{ fontSize: 14, color: "#333", flex: 1 }}>
+                {index + 1}. {file.name}
+              </Text>
+              <TouchableOpacity onPress={() => removePdf(index)}>
+                <Ionicons name="trash" size={20} color="red" />
+              </TouchableOpacity>
+            </View>
+          ))}
+
+        <Text style={styles.note}>
+          *pastikan format file yang Anda kirim .pdf
+        </Text>
 
         {/* WILAYAH */}
         <Text style={styles.label}>Wilayah</Text>
@@ -115,7 +244,11 @@ export default function PageCreate({ navigation }) {
           onPress={() => setWilayahModalVisible(true)}
         >
           <View style={styles.dateInput}>
-            <Text>{selectedWilayah || '📍 Pilih wilayah asal e-paper'}</Text>
+            <Text>
+              {selectedWilayah
+                ? wilayahLabel[selectedWilayah]
+                : "📍 Pilih wilayah asal e-paper"}
+            </Text>
             <Ionicons name="chevron-down" size={20} color="#000" />
           </View>
         </TouchableOpacity>
@@ -143,7 +276,7 @@ export default function PageCreate({ navigation }) {
                     }}
                     style={styles.modalItem}
                   >
-                    <Text style={{ fontSize: 16 }}>{item}</Text>
+                    <Text style={{ fontSize: 16 }}>{wilayahLabel[item]}</Text>
                   </TouchableOpacity>
                 )}
               />
@@ -153,7 +286,10 @@ export default function PageCreate({ navigation }) {
 
         {/* TANGGAL */}
         <Text style={styles.label}>Tanggal Terbit E-paper</Text>
-        <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.input}>
+        <TouchableOpacity
+          onPress={() => setShowDatePicker(true)}
+          style={styles.input}
+        >
           <View style={styles.dateInput}>
             <Text>{formatDate(date)}</Text>
             <Ionicons name="calendar" size={20} color="#000" />
@@ -163,7 +299,7 @@ export default function PageCreate({ navigation }) {
           <DateTimePicker
             value={date}
             mode="date"
-            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+            display={Platform.OS === "ios" ? "spinner" : "default"}
             onChange={handleDateChange}
           />
         )}
@@ -171,107 +307,118 @@ export default function PageCreate({ navigation }) {
         <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
           <Text style={styles.saveText}>Simpan Berita</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F9FAFB' },
+  container: { flex: 1, backgroundColor: "#F9FAFB" },
   header: {
-    backgroundColor: '#1E4B8A',
-    paddingTop: Platform.OS === 'ios' ? 90 : 70,
+    backgroundColor: "#1E4B8A",
+    paddingTop: Platform.OS === "ios" ? 90 : 70,
     paddingBottom: 30,
-    alignItems: 'center',
-    position: 'relative',
+    alignItems: "center",
+    position: "relative",
   },
   backButton: {
-    position: 'absolute',
-    top: Platform.OS === 'ios' ? 60 : 40,
+    position: "absolute",
+    top: Platform.OS === "ios" ? 60 : 40,
     left: 20,
     zIndex: 1,
   },
   headerTitle: {
     fontSize: 35,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
   },
   headerSubtitle: {
     fontSize: 25,
     marginTop: 8,
   },
   yellowText: {
-    color: '#efbe1eff',
-    fontWeight: 'bold',
+    color: "#efbe1eff",
+    fontWeight: "bold",
   },
   whiteText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
   },
-  formWrapper: { padding: 20 },
-  formTitle: { fontSize: 16, fontWeight: 'bold', marginBottom: 4 },
-  formDesc: { color: '#666', marginBottom: 20 },
-  label: { marginTop: 12, marginBottom: 6, fontWeight: '600' },
+  formWrapper: { paddingHorizontal: 16, paddingVertical: 38 },
+  formTitle: { fontSize: 16, fontWeight: "bold", marginBottom: 4 },
+  formDesc: { color: "#666", marginBottom: 20 },
+  label: { marginTop: 12, marginBottom: 6, fontWeight: "600" },
   uploadBox: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     padding: 14,
-    justifyContent: 'center',
+    justifyContent: "center",
     marginBottom: 5,
   },
-  uploadText: { color: '#999', fontStyle: 'italic' },
+  uploadText: { color: "#999", fontStyle: "italic" },
   coverPreview: {
-    width: '100%',
+    width: "100%",
     height: 160,
-    resizeMode: 'contain',
+    resizeMode: "contain",
     borderRadius: 8,
   },
-  note: { color: '#888', fontSize: 12, marginBottom: 12, marginTop: -5 },
+  note: { color: "#888", fontSize: 12, marginBottom: 12, marginTop: -5 },
   input: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 14,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     marginBottom: 20,
   },
   dateInput: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   saveButton: {
-    backgroundColor: '#1E4B8A',
+    backgroundColor: "#1E4B8A",
     paddingVertical: 14,
     borderRadius: 10,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 10,
   },
-  saveText: { color: '#fff', fontWeight: 'bold' },
+  saveText: { color: "#fff", fontWeight: "bold" },
 
-  // Modal Styles
+  pdfItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
+    padding: 10,
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+  },
+
   modalOverlay: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
   },
   modalContent: {
-    width: '80%',
-    backgroundColor: '#fff',
+    width: "80%",
+    backgroundColor: "#fff",
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 16,
     elevation: 5,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOpacity: 0.3,
     shadowRadius: 5,
   },
   modalItem: {
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: "#eee",
   },
 });
