@@ -14,7 +14,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-const BASE_URL = "http://192.168.1.93:3000";
+const BASE_URL = "http://172.20.10.2:3000";
 
 export default function PageLogin({ navigation }) {
   const [email, setEmail] = useState("");
