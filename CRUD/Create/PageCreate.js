@@ -25,7 +25,7 @@ export default function PageCreate({ navigation }) {
   const [selectedWilayah, setSelectedWilayah] = useState(null);
   const [wilayahModalVisible, setWilayahModalVisible] = useState(false);
 
-  const BASE_URL = "http://192.168.1.93:3000";
+  const BASE_URL = "http://192.168.1.6:3000";
 
   const wilayahList = ["TULUNGAGUNG", "TRENGGALEK", "BLITAR"];
 

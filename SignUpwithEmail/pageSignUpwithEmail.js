@@ -5,14 +5,12 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
   Alert,
 } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const BASE_URL = "http://192.168.1.93:3000";
+const BASE_URL = "http://192.168.1.6:3000";
 
 export default function SignUpWithEmail({ navigation }) {
   const [username, setUserName] = useState("");
@@ -83,12 +81,12 @@ export default function SignUpWithEmail({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <TouchableOpacity
         style={styles.backButton}
         onPress={() => navigation.goBack()}
       >
-        <AntDesign name="arrowleft" size={24} color="#1E3A8A" />
+        <Ionicons name="arrow-back" size={24} color="#1E3A8A" />
       </TouchableOpacity>
 
       <View style={styles.innerContainer}>
@@ -147,7 +145,7 @@ export default function SignUpWithEmail({ navigation }) {
           <Text style={styles.buttonText}>Daftar</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 

@@ -1,14 +1,47 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 const ResetPassword = ({ navigation }) => {
   const [email, setEmail] = useState('');
 
-  const handleSendOTP = () => {
-    // Implementasikan logika kirim OTP ke email
-    console.log("📨 Kirim OTP ke:", email);
-    navigation.navigate('PageKonfrimOTP'); // atau halaman berikutnya untuk input OTP
+  const handleSendOTP = async () => {
+    console.log("🚀 Tombol kirim kode OTP ditekan");
+
+    if (!email) {
+      console.warn("⚠️ Field email masih kosong");
+      Alert.alert("Input tidak lengkap", "Isi semua field terlebih dahulu!");
+      return;
+    }
+
+    console.log("📨 Akan kirim request ke server dengan email:", email);
+
+    try {
+      const response = await fetch("http://192.168.1.6:3000/RadarApps/api/v1/otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      console.log("🔄 Response status:", response.status);
+
+      const result = await response.json();
+      console.log("📦 Response JSON:", result);
+
+      if (!response.ok) {
+        console.error("❌ Server Error:", result);
+        Alert.alert("Gagal mengirim OTP", result.message || "Terjadi kesalahan");
+        return;
+      }
+
+      console.log("✅ OTP berhasil dikirim ke:", email);
+      Alert.alert("Sukses", "Kode OTP berhasil dikirim ke email kamu");
+      navigation.navigate('PageKonfrimOTP');
+
+    } catch (error) {
+      console.error("❌ Error jaringan:", error.message || error);
+      Alert.alert("Gagal", "Tidak dapat terhubung ke server");
+    }
   };
 
   return (

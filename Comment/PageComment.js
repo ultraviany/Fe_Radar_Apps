@@ -15,13 +15,12 @@ import {
   ActivityIndicator,
   Modal,
   Image,
-  SafeAreaView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const BASE_URL = "http://192.168.1.93:3000";
+const BASE_URL = "http://192.168.1.6:3000";
 
 // buat menampilkan waktu
 const formatTimeAgo = (dateString) => {
@@ -287,8 +286,8 @@ export default function PageComment({ navigation, route }) {
     >
       <StatusBar barStyle="light-content" backgroundColor="#1E4B8A" />
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <SafeAreaView style={styles.inner}>
-          <SafeAreaView style={styles.header}>
+        <View style={styles.inner}>
+          <View style={styles.header}>
             <TouchableOpacity
               onPress={() => navigation.goBack()}
               style={styles.backButton}
@@ -300,7 +299,7 @@ export default function PageComment({ navigation, route }) {
               <Text style={styles.yellowText}>RADAR</Text>
               <Text style={styles.whiteText}> {region.toUpperCase()}</Text>
             </Text>
-          </SafeAreaView>
+          </View>
 
           <Text style={styles.date}>
             {region
@@ -399,7 +398,7 @@ export default function PageComment({ navigation, route }) {
               </View>
             </View>
           </Modal>
-        </SafeAreaView>
+        </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );

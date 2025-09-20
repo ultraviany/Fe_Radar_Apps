@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from "react";
-import { View, Image, StyleSheet, Animated } from "react-native";
+import { View, StyleSheet, Animated } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import jwtDecode from "jwt-decode"; // npm install jwt-decode
 
 export default function SplashScreen({ navigation }) {
-  const fadeAnim = useRef(new Animated.Value(0)).current; 
+  const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.8)).current;
 
   useEffect(() => {
@@ -22,15 +23,31 @@ export default function SplashScreen({ navigation }) {
       }),
     ]).start();
 
-    // Cek login 
     const checkLogin = async () => {
       try {
         const token = await AsyncStorage.getItem("token");
 
         setTimeout(() => {
+          let isValid = false;
+
           if (token) {
+            try {
+              const decoded = jwtDecode(token);
+              const now = Math.floor(Date.now() / 1000);
+
+              // cek ada exp dan belum expired
+              if (decoded?.exp && decoded.exp > now) {
+                isValid = true;
+              }
+            } catch (err) {
+              console.log("❌ Token invalid / rusak:", err);
+            }
+          }
+
+          if (isValid) {
             navigation.replace("MainTabs", { screen: "Home" });
           } else {
+            // kalau token nggak ada / expired / invalid
             navigation.replace("Login");
           }
         }, 2500);

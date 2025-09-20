@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
   ScrollView,
   Image,
   Alert,
@@ -14,7 +13,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const BASE_URL = "http://192.168.1.93:3000";
+const BASE_URL = "http://192.168.1.6:3000";
 
 const KelolaAkun = () => {
   const navigation = useNavigation();
@@ -143,7 +142,7 @@ const KelolaAkun = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.avatarContainer}>
           <TouchableOpacity onPress={pickImage} style={styles.avatarWrapper}>
@@ -187,7 +186,7 @@ const KelolaAkun = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

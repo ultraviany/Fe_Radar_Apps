@@ -10,7 +10,6 @@ import {
   ScrollView,
   Image,
   Modal,
-  SafeAreaView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
@@ -18,7 +17,7 @@ import ImageViewer from "react-native-image-zoom-viewer";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
-const BASE_URL = "http://192.168.1.93:3000";
+const BASE_URL = "http://192.168.1.6:3000";
 
 //ukuran preview
 const PREVIEW_WIDTH = screenWidth * 0.8;
@@ -96,7 +95,7 @@ export default function PageEpaper({ navigation, route }) {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* HEADER */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
@@ -172,7 +171,7 @@ export default function PageEpaper({ navigation, route }) {
           enableImageZoom={true} // zoom aktif di modal
         />
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 }
 

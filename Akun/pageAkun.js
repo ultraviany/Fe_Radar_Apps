@@ -7,7 +7,6 @@ import {
   StyleSheet,
   ScrollView,
   Modal,
-  SafeAreaView,
   Image,
   Alert,
 } from "react-native";
@@ -19,7 +18,7 @@ import {
 } from "@expo/vector-icons";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const BASE_URL = "http://192.168.1.93:3000";
+const BASE_URL = "http://192.168.1.6:3000";
 
 const Pageakun = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -66,7 +65,7 @@ const Pageakun = () => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Akun</Text>
@@ -197,7 +196,7 @@ const Pageakun = () => {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 

@@ -1,7 +1,7 @@
 import React, { createContext, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const BASE_URL = "http://192.168.1.93:3000";
+const BASE_URL = "http://192.168.1.6:3000";
 
 export const LikeContext = createContext();
 

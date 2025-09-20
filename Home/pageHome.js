@@ -5,7 +5,6 @@ import {
   ActivityIndicator,
   StyleSheet,
   Text,
-  SafeAreaView,
 } from "react-native";
 import Header from "./HeaderSection";
 import ContactCard from "./ContactSection";
@@ -15,7 +14,7 @@ import { SaveContext } from "../Context/SaveContext";
 import { LikeContext } from "../Context/LikeContext";
 import { useFocusEffect } from "@react-navigation/native";
 
-const BASE_URL = "http://192.168.1.93:3000";
+const BASE_URL = "http://192.168.1.6:3000";
 
 export default function HomePage({ navigation }) {
   const [activeTab, setActiveTab] = useState("All Epaper");
@@ -204,9 +203,9 @@ export default function HomePage({ navigation }) {
       contentContainerStyle={{ paddingHorizontal: 12 }}
       ListHeaderComponent={
         <>
-          <SafeAreaView style={{ marginHorizontal: -16 }}>
+          <View style={{ marginHorizontal: -16 }}>
             <Header />
-          </SafeAreaView>
+          </View>
           <ContactCard />
           <NewsTabBar activeTab={activeTab} setActiveTab={setActiveTab} />
         </>

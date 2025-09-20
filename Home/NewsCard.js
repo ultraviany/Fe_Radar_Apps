@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Dimensions,
 } from "react-native";
-import { Ionicons, AntDesign } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { LikeContext } from "../Context/LikeContext"; // ambil dari context
 
 const screenWidth = Dimensions.get("window").width;
@@ -78,8 +78,8 @@ export default function NewsCard({
             onPress={() => toggleLike(item.id)}
             style={styles.likeButton}
           >
-            <AntDesign
-              name={isLiked(item.id) ? "heart" : "hearto"}
+            <Ionicons
+              name={isLiked(item.id) ? "heart" : "heart-outline"}
               size={18}
               color={isLiked(item.id) ? "red" : "grey"}
             />
@@ -168,15 +168,15 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
   },
   likeButton: {
-  flexDirection: "row",
-  alignItems: "center",
-  marginRight: 3, // kasih jarak biar gak nempel ke icon save
-},
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 3, // kasih jarak biar gak nempel ke icon save
+  },
 
-likeCount: {
-  fontSize: 12,
-  color: "#1E4B8A",
-  marginLeft: 4,
-  fontWeight: "500",
-},
+  likeCount: {
+    fontSize: 12,
+    color: "#1E4B8A",
+    marginLeft: 4,
+    fontWeight: "500",
+  },
 });
