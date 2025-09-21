@@ -5,17 +5,10 @@ import { Ionicons, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 export default function AboutPage() {
   return (
     <ScrollView style={styles.container}>
-
-      {/* ini untuk header tentang kamu 
-      dicomment karena udah ada stack navigation */}
-      {/* <View style={styles.header}>
-        <Ionicons name="arrow-back" size={24} color="#fff" />
-        <Text style={styles.headerText}>Tentang Aplikasi</Text>
-      </View> */}
       
       <View style={styles.content}>
         <Image
-          source={require("../assets/image22.png")} // ganti sesuai lokasi logo kamu
+          source={require("../assets/image22.png")}
           style={styles.logo}
         />
         <Text style={styles.epaperText}>EPAPER</Text>
@@ -60,20 +53,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
-  // header: {
-  //   backgroundColor: "#2F5C9A",
-  //   flexDirection: "row",
-  //   alignItems: "center",
-  //   paddingTop: 50,
-  //   paddingBottom: 16,
-  //   paddingHorizontal: 20,
-  // },
-  // headerText: {
-  //   color: "#fff",
-  //   fontSize: 18,
-  //   marginLeft: 10,
-  //   fontWeight: "bold",
-  // },
   content: {
     alignItems: "center",
     padding: 20,
@@ -98,7 +77,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontSize: 14,
     color: "#555",
-    lineHeight: 20, // tambahkan ini untuk spasi antar baris
+    lineHeight: 20, 
   },
   featureBox: {
     width: "100%",
