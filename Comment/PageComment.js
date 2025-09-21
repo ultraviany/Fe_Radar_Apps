@@ -19,8 +19,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-const BASE_URL = "http://192.168.1.6:3000";
+import BASE_URL from "../config";
 
 // buat menampilkan waktu
 const formatTimeAgo = (dateString) => {

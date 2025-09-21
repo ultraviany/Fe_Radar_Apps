@@ -18,7 +18,7 @@ import {
 } from "@expo/vector-icons";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const BASE_URL = "http://192.168.1.6:3000";
+import BASE_URL from "../config";
 
 const Pageakun = () => {
   const [modalVisible, setModalVisible] = useState(false);

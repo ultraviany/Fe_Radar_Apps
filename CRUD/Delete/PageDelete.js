@@ -15,6 +15,7 @@ import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import BASE_URL from "../../config";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -28,7 +29,6 @@ export default function PageDelete() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
-  const BASE_URL = "http://192.168.1.6:3000";
   const quantity = 1;
 
   useFocusEffect(

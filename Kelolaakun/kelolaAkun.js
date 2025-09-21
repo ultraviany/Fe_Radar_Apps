@@ -13,7 +13,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const BASE_URL = "http://192.168.1.6:3000";
+import BASE_URL from "../config";
 
 const KelolaAkun = () => {
   const navigation = useNavigation();

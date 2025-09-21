@@ -16,6 +16,7 @@ import * as DocumentPicker from "expo-document-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import BASE_URL from "../../config";
 
 export default function PageCreate({ navigation }) {
   const [coverUri, setCoverUri] = useState(null);
@@ -24,8 +25,6 @@ export default function PageCreate({ navigation }) {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedWilayah, setSelectedWilayah] = useState(null);
   const [wilayahModalVisible, setWilayahModalVisible] = useState(false);
-
-  const BASE_URL = "http://192.168.1.6:3000";
 
   const wilayahList = ["TULUNGAGUNG", "TRENGGALEK", "BLITAR"];
 

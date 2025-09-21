@@ -12,8 +12,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-const BASE_URL = "http://192.168.1.6:3000";
+import BASE_URL from "../config";
 
 export default function PagePwOTP({ navigation }) {
   const [password, setPassword] = useState("");

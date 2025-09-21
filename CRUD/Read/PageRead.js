@@ -13,6 +13,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import BASE_URL from "../../config";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -26,7 +27,6 @@ export default function PageRead() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
-  const BASE_URL = "http://192.168.1.6:3000";
   const quantity = 10;
 
   useFocusEffect(

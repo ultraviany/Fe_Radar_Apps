@@ -14,10 +14,10 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import ImageViewer from "react-native-image-zoom-viewer";
+import BASE_URL from "../config";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
-const BASE_URL = "http://192.168.1.6:3000";
 
 //ukuran preview
 const PREVIEW_WIDTH = screenWidth * 0.8;

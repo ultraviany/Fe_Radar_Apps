@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import BASE_URL from '../config';
 
 const ResetPassword = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -17,7 +18,7 @@ const ResetPassword = ({ navigation }) => {
     console.log("📨 Akan kirim request ke server dengan email:", email);
 
     try {
-      const response = await fetch("http://192.168.1.6:3000/RadarApps/api/v1/otp", {
+      const response = await fetch(`${BASE_URL}/RadarApps/api/v1/otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),

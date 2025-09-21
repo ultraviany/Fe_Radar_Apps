@@ -6,7 +6,6 @@ import {
     TouchableOpacity,
     Alert,
     StyleSheet,
-    SafeAreaView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -33,7 +32,7 @@ const GantiPassword = () => {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Ionicons name="arrow-back" size={24} color="#fff" />
@@ -84,7 +83,7 @@ const GantiPassword = () => {
                     <Text style={styles.buttonText}>Simpan Kata Sandi</Text>
                 </TouchableOpacity>
             </View>
-        </SafeAreaView>
+        </View>
     );
 };
 

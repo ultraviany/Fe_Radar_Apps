@@ -13,8 +13,7 @@ import NewsSection from "./NewsSection";
 import { SaveContext } from "../Context/SaveContext";
 import { LikeContext } from "../Context/LikeContext";
 import { useFocusEffect } from "@react-navigation/native";
-
-const BASE_URL = "http://192.168.1.6:3000";
+import BASE_URL from "../config";
 
 export default function HomePage({ navigation }) {
   const [activeTab, setActiveTab] = useState("All Epaper");

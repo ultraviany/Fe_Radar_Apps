@@ -13,9 +13,9 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import BASE_URL from "../../config";
 
 const screenWidth = Dimensions.get("window").width;
-const BASE_URL = "http://192.168.1.6:3000"; // ganti sesuai server
 const quantity = 10;
 
 export default function HomeUpdate() {

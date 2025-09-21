@@ -1,8 +1,8 @@
 // SaveContext.js
 import React, { createContext, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import BASE_URL from "../config";
 
-const BASE_URL = "http://192.168.1.6:3000";
 const quantity = 10; // jumlah save per page
 const periode = new Date().getFullYear();
 

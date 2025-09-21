@@ -1,8 +1,7 @@
 import React, { useState, useCallback } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
-
-const BASE_URL = "http://192.168.1.6:3000";
+import BASE_URL from "../config";
 
 export const useActivities = () => {
   const [comments, setComments] = useState([]);
